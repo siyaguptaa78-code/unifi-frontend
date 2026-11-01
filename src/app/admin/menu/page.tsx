@@ -10,24 +10,53 @@ import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { UtensilsCrossed, Plus, Check, X, Tag } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
+import {
+  UtensilsCrossed,
+  Plus,
+  Check,
+  X,
+  Tag,
+  Edit,
+  Trash2,
+  Search,
+  CheckCircle2,
+  XCircle,
+  FolderPlus,
+} from "lucide-react";
 import { formatPoints } from "@/lib/utils";
 import { toast } from "sonner";
 
 export default function AdminMenuPage() {
+  const [activeTab, setActiveTab] = useState<"ITEMS" | "CATEGORIES" | "APPROVALS">("ITEMS");
   const [items, setItems] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [approvals, setApprovals] = useState<any>({ items: [], prices: [] });
   const [loading, setLoading] = useState(true);
+  const [categoryFilter, setCategoryFilter] = useState("ALL");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // New item modal
+  // Modals
   const [itemModalOpen, setItemModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<any>(null);
+  const [catModalOpen, setCatModalOpen] = useState(false);
+  const [editingCat, setEditingCat] = useState<any>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  // Item form states
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [pointsPrice, setPointsPrice] = useState(250);
   const [isVeg, setIsVeg] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
+  const [image, setImage] = useState("");
+  const [itemActive, setItemActive] = useState(true);
+
+  // Category form states
+  const [catName, setCatName] = useState("");
+  const [catDesc, setCatDesc] = useState("");
+  const [sortOrder, setSortOrder] = useState(0);
+  const [catActive, setCatActive] = useState(true);
 
   const loadData = async () => {
     try {
@@ -36,11 +65,12 @@ export default function AdminMenuPage() {
         fetch("/api/menu/categories"),
         fetch("/api/menu/approvals"),
       ]);
+
       if (itRes.ok) setItems((await itRes.json()).data || []);
       if (catRes.ok) {
         const cats = (await catRes.json()).data || [];
         setCategories(cats);
-        if (cats.length > 0) setCategoryId(cats[0]._id);
+        if (cats.length > 0 && !categoryId) setCategoryId(cats[0]._id);
       }
       if (appRes.ok) setApprovals((await appRes.json()).data || { items: [], prices: [] });
     } catch {
@@ -54,30 +84,132 @@ export default function AdminMenuPage() {
     loadData();
   }, []);
 
-  const handleCreateCentralItem = async (e: React.FormEvent) => {
+  const openCreateItem = () => {
+    setEditingItem(null);
+    setName("");
+    setDescription("");
+    setPointsPrice(250);
+    setIsVeg(true);
+    setImage("");
+    setItemActive(true);
+    if (categories.length > 0) setCategoryId(categories[0]._id);
+    setItemModalOpen(true);
+  };
+
+  const openEditItem = (item: any) => {
+    setEditingItem(item);
+    setName(item.name);
+    setDescription(item.description || "");
+    setCategoryId(item.category?._id || item.category || (categories[0]?._id ?? ""));
+    setPointsPrice(item.pointsPrice || 250);
+    setIsVeg(item.isVeg ?? true);
+    setImage(item.image || "");
+    setItemActive(item.active ?? true);
+    setItemModalOpen(true);
+  };
+
+  const handleSaveItem = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const res = await fetch("/api/menu/items", {
-        method: "POST",
+      const payload = {
+        name,
+        description,
+        category: categoryId,
+        pointsPrice: Number(pointsPrice),
+        isVeg,
+        image: image || undefined,
+        active: itemActive,
+      };
+
+      const url = editingItem ? `/api/menu/items/${editingItem._id}` : "/api/menu/items";
+      const method = editingItem ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          description,
-          category: categoryId,
-          pointsPrice,
-          isVeg,
-          active: true,
-        }),
+        body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error("Failed to create menu item");
-      toast.success("Central menu item created successfully");
+
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error?.message || "Operation failed");
+
+      toast.success(editingItem ? `Menu item ${name} updated` : `Menu item ${name} created`);
       setItemModalOpen(false);
-      setName("");
-      setDescription("");
       loadData();
     } catch (err: any) {
-      toast.error(err.message || "Failed to create item");
+      toast.error(err.message || "Operation failed");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const toggleItemActive = async (item: any) => {
+    try {
+      const res = await fetch(`/api/menu/items/${item._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...item,
+          category: item.category?._id || item.category,
+          active: !item.active,
+        }),
+      });
+      if (res.ok) {
+        toast.success(`Item ${item.name} is now ${!item.active ? "ACTIVE" : "INACTIVE"}`);
+        loadData();
+      }
+    } catch {
+      toast.error("Failed to toggle item");
+    }
+  };
+
+  const openCreateCat = () => {
+    setEditingCat(null);
+    setCatName("");
+    setCatDesc("");
+    setSortOrder(categories.length);
+    setCatActive(true);
+    setCatModalOpen(true);
+  };
+
+  const openEditCat = (cat: any) => {
+    setEditingCat(cat);
+    setCatName(cat.name);
+    setCatDesc(cat.description || "");
+    setSortOrder(cat.sortOrder || 0);
+    setCatActive(cat.active ?? true);
+    setCatModalOpen(true);
+  };
+
+  const handleSaveCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      const payload = {
+        name: catName,
+        description: catDesc,
+        sortOrder: Number(sortOrder),
+        active: catActive,
+      };
+
+      const url = editingCat ? `/api/menu/categories/${editingCat._id}` : "/api/menu/categories";
+      const method = editingCat ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error?.message || "Operation failed");
+
+      toast.success(editingCat ? `Category ${catName} updated` : `Category ${catName} created`);
+      setCatModalOpen(false);
+      loadData();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to save category");
     } finally {
       setSubmitting(false);
     }
@@ -99,174 +231,445 @@ export default function AdminMenuPage() {
     }
   };
 
+  const filteredItems = items.filter((it) => {
+    const matchCat = categoryFilter === "ALL" || it.category?._id === categoryFilter || it.category === categoryFilter;
+    const matchQuery =
+      !searchQuery ||
+      it.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      it.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchCat && matchQuery;
+  });
+
+  const pendingApprovalsCount = (approvals.items?.length || 0) + (approvals.prices?.length || 0);
+
   return (
     <PortalLayout allowedRoles={["SUPER_ADMIN"]}>
       <PageHeader
-        title="Central Menu Governance & Approvals"
-        description="Manage central master items and review local cafe menu requests and price overrides."
-        badge="Menu Governance"
+        title="Central Menu Governance & Food Catalog"
+        description="Global menu management across all UniCafe locations. Govern base points pricing, nutritional flags, categories, and branch-level customization approvals."
+        badge="Catalog Governance"
         action={
-          <Button onClick={() => setItemModalOpen(true)} className="gap-2 font-semibold">
-            <Plus className="h-4 w-4" />
-            <span>Add Central Menu Item</span>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="outline" onClick={openCreateCat} className="text-xs h-9">
+              <FolderPlus className="h-4 w-4 mr-1.5" />
+              New Category
+            </Button>
+            <Button size="sm" onClick={openCreateItem} className="text-xs h-9">
+              <Plus className="h-4 w-4 mr-1.5" />
+              Add Menu Item
+            </Button>
+          </div>
         }
       />
 
-      {/* Pending Approval Requests Section */}
-      {((approvals.prices && approvals.prices.length > 0) || (approvals.items && approvals.items.length > 0)) && (
-        <Card className="border-amber-500/40 bg-amber-950/15 p-5 space-y-4">
-          <CardTitle className="text-sm font-bold text-amber-400 flex items-center gap-2">
-            <Tag className="h-4 w-4" />
-            <span>Pending Local Price Overrides & Items ({approvals.prices?.length || 0})</span>
-          </CardTitle>
+      {/* Tabs */}
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => setActiveTab("ITEMS")}
+          className={`flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+            activeTab === "ITEMS" ? "bg-amber-600 text-stone-950" : "bg-stone-900 text-stone-400 hover:text-white"
+          }`}
+        >
+          <UtensilsCrossed className="h-3.5 w-3.5" />
+          Menu Items ({items.length})
+        </button>
+        <button
+          onClick={() => setActiveTab("CATEGORIES")}
+          className={`flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+            activeTab === "CATEGORIES" ? "bg-amber-600 text-stone-950" : "bg-stone-900 text-stone-400 hover:text-white"
+          }`}
+        >
+          <Tag className="h-3.5 w-3.5" />
+          Categories ({categories.length})
+        </button>
+        <button
+          onClick={() => setActiveTab("APPROVALS")}
+          className={`flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+            activeTab === "APPROVALS" ? "bg-amber-600 text-stone-950" : "bg-stone-900 text-stone-400 hover:text-white"
+          }`}
+        >
+          Branch Approvals
+          {pendingApprovalsCount > 0 && (
+            <span className="h-4 w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold">
+              {pendingApprovalsCount}
+            </span>
+          )}
+        </button>
+      </div>
 
-          <div className="space-y-2">
-            {approvals.prices?.map((p: any) => (
-              <div key={p._id} className="p-3 rounded-xl bg-stone-900 border border-stone-800 text-xs flex justify-between items-center">
-                <div>
-                  <div className="font-semibold text-white">
-                    {p.menuItem?.name} @ {p.cafe?.name}
-                  </div>
-                  <div className="text-[11px] text-stone-400">
-                    Standard: {p.menuItem?.pointsPrice} pts &rarr; Requested Override:{" "}
-                    <strong className="text-amber-400">{p.requestedPrice} pts</strong> (by {p.requestedBy?.name})
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="success"
-                    onClick={() => reviewApproval("PRICE_OVERRIDE", p._id, true)}
-                    className="h-7 px-2.5 text-xs font-semibold"
-                  >
-                    Approve
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => reviewApproval("PRICE_OVERRIDE", p._id, false)}
-                    className="h-7 px-2.5 text-xs"
-                  >
-                    Reject
-                  </Button>
-                </div>
-              </div>
-            ))}
+      {/* TAB 1: Menu Items */}
+      {activeTab === "ITEMS" && (
+        <div className="space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <button
+                onClick={() => setCategoryFilter("ALL")}
+                className={`px-2.5 py-1 text-xs rounded-md font-medium transition-colors cursor-pointer ${
+                  categoryFilter === "ALL" ? "bg-amber-600 text-stone-950 font-bold" : "bg-stone-900 text-stone-400 hover:text-white"
+                }`}
+              >
+                All Categories
+              </button>
+              {categories.map((c) => (
+                <button
+                  key={c._id}
+                  onClick={() => setCategoryFilter(c._id)}
+                  className={`px-2.5 py-1 text-xs rounded-md font-medium transition-colors cursor-pointer ${
+                    categoryFilter === c._id ? "bg-amber-600 text-stone-950 font-bold" : "bg-stone-900 text-stone-400 hover:text-white"
+                  }`}
+                >
+                  {c.name}
+                </button>
+              ))}
+            </div>
+
+            <div className="relative w-64">
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-stone-500" />
+              <Input
+                placeholder="Search food items..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 h-9 text-xs"
+              />
+            </div>
           </div>
+
+          <Card className="border-stone-800 bg-stone-900/60">
+            <CardContent className="p-0">
+              {loading ? (
+                <div className="p-16 flex justify-center">
+                  <Spinner size="lg" />
+                </div>
+              ) : filteredItems.length === 0 ? (
+                <EmptyState title="No menu items found" description="Try selecting another category or add a new central menu item." />
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Food Item</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead className="text-right">Price (Points)</TableHead>
+                      <TableHead>Availability</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredItems.map((it) => (
+                      <TableRow key={it._id}>
+                        <TableCell className="font-semibold text-xs text-white">
+                          <div className="flex items-center gap-2">
+                            <span className={`h-2 w-2 rounded-full ${it.isVeg ? "bg-emerald-500" : "bg-red-500"}`} />
+                            <div>
+                              <div>{it.name}</div>
+                              {it.description && <div className="text-[10px] text-stone-400 font-normal max-w-sm truncate">{it.description}</div>}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-xs text-stone-300">
+                          {it.category?.name || "General"}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={it.isVeg ? "success" : "destructive"} className="text-[10px]">
+                            {it.isVeg ? "VEG" : "NON-VEG"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right font-bold text-xs text-amber-400">
+                          {formatPoints(it.pointsPrice)}
+                        </TableCell>
+                        <TableCell>
+                          <button
+                            onClick={() => toggleItemActive(it)}
+                            className="cursor-pointer"
+                            title="Click to toggle availability"
+                          >
+                            <Badge variant={it.active ? "success" : "secondary"} className="text-[10px]">
+                              {it.active ? "ACTIVE" : "INACTIVE"}
+                            </Badge>
+                          </button>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openEditItem(it)}
+                            className="text-xs text-stone-300 hover:text-white h-8"
+                          >
+                            <Edit className="h-3.5 w-3.5 mr-1" />
+                            Edit
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* TAB 2: Categories */}
+      {activeTab === "CATEGORIES" && (
+        <Card className="border-stone-800 bg-stone-900/60">
+          <CardContent className="p-0">
+            {categories.length === 0 ? (
+              <EmptyState title="No categories found" description="Create menu categories to organize food items." />
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Category Name</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead className="text-center">Sort Order</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {categories.map((c) => (
+                    <TableRow key={c._id}>
+                      <TableCell className="font-semibold text-xs text-white">
+                        {c.name}
+                      </TableCell>
+                      <TableCell className="text-xs text-stone-400">
+                        {c.description || "—"}
+                      </TableCell>
+                      <TableCell className="text-center font-mono text-xs text-stone-300">
+                        {c.sortOrder ?? 0}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={c.active ? "success" : "secondary"} className="text-[10px]">
+                          {c.active ? "ACTIVE" : "INACTIVE"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => openEditCat(c)}
+                          className="text-xs text-stone-300 hover:text-white h-8"
+                        >
+                          <Edit className="h-3.5 w-3.5 mr-1" />
+                          Edit
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
         </Card>
       )}
 
-      {/* Master Menu Items */}
-      <Card className="border-stone-800 bg-stone-900/60">
-        <CardHeader>
-          <CardTitle className="text-sm font-bold">Central Menu Catalog ({items.length} Items)</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          {loading ? (
-            <div className="p-12 flex justify-center">
-              <Spinner size="lg" />
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Item Name</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead className="text-right">Price (Points)</TableHead>
-                  <TableHead>Dietary</TableHead>
-                  <TableHead>Scope</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {items.map((it) => (
-                  <TableRow key={it._id}>
-                    <TableCell className="font-semibold text-xs text-white">
-                      <div>{it.name}</div>
-                      <div className="text-[11px] text-stone-400 max-w-sm truncate">{it.description}</div>
-                    </TableCell>
-                    <TableCell className="text-xs text-stone-300">
-                      {it.category?.name}
-                    </TableCell>
-                    <TableCell className="text-right font-bold text-xs text-amber-400">
-                      {formatPoints(it.pointsPrice)}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={it.isVeg ? "success" : "destructive"} className="text-[10px]">
-                        {it.isVeg ? "Veg" : "Non-Veg"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="text-[10px]">
-                        {it.scope}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="success" className="text-[10px]">
-                        {it.approvalStatus}
-                      </Badge>
-                    </TableCell>
+      {/* TAB 3: Branch Approvals */}
+      {activeTab === "APPROVALS" && (
+        <div className="space-y-6">
+          <Card className="border-stone-800 bg-stone-900/60">
+            <CardHeader>
+              <CardTitle className="text-sm font-bold text-white">Pending Local Menu Item Submissions</CardTitle>
+              <p className="text-xs text-stone-400">Items submitted by cafe managers or franchise owners awaiting central authorization</p>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Item Name</TableHead>
+                    <TableHead>Submitting Cafe</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead className="text-right">Proposed Points</TableHead>
+                    <TableHead className="text-right">Review Action</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+                </TableHeader>
+                <TableBody>
+                  {approvals.items && approvals.items.length > 0 ? (
+                    approvals.items.map((it: any) => (
+                      <TableRow key={it._id}>
+                        <TableCell className="font-semibold text-xs text-white">{it.name}</TableCell>
+                        <TableCell className="text-xs text-amber-400">{it.cafe?.name || "Local Branch"}</TableCell>
+                        <TableCell className="text-xs text-stone-400">{it.category?.name || "—"}</TableCell>
+                        <TableCell className="text-right font-bold text-xs text-white">{it.pointsPrice} pts</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <Button size="sm" onClick={() => reviewApproval("LOCAL_ITEM", it._id, true)} className="h-7 text-xs bg-emerald-600 hover:bg-emerald-500">
+                              <Check className="h-3.5 w-3.5 mr-1" /> Approve
+                            </Button>
+                            <Button size="sm" variant="destructive" onClick={() => reviewApproval("LOCAL_ITEM", it._id, false)} className="h-7 text-xs">
+                              <X className="h-3.5 w-3.5 mr-1" /> Reject
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-6 text-xs text-stone-400">
+                        No pending local item requests.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
-      {/* Add Central Item Modal */}
+      {/* Modal: Item Create/Edit */}
       <Dialog open={itemModalOpen} onOpenChange={setItemModalOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-base font-bold">Add Central Menu Item</DialogTitle>
+            <DialogTitle>{editingItem ? `Edit Menu Item: ${editingItem.name}` : "Add Central Menu Item"}</DialogTitle>
             <DialogDescription>
-              New item will be deployed across all registered cafes in India.
+              Create or modify standard food catalog items and points pricing.
             </DialogDescription>
           </DialogHeader>
+          <form onSubmit={handleSaveItem} className="space-y-4 pt-2">
+            <div>
+              <label className="text-xs font-semibold text-stone-300">Food Item Name</label>
+              <Input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. Hazelnut Cold Brew"
+                required
+                className="mt-1 text-xs"
+              />
+            </div>
 
-          <form onSubmit={handleCreateCentralItem} className="space-y-3.5 py-2">
-            <Input label="Item Name" placeholder="Double Dark Mocha" value={name} onChange={(e) => setName(e.target.value)} required />
-            <Input label="Description" placeholder="Artisanal Belgian chocolate with double espresso" value={description} onChange={(e) => setDescription(e.target.value)} required />
+            <div>
+              <label className="text-xs font-semibold text-stone-300">Category</label>
+              <select
+                value={categoryId}
+                onChange={(e) => setCategoryId(e.target.value)}
+                className="w-full mt-1 px-3 py-2 bg-stone-900 border border-stone-800 rounded-lg text-xs text-white"
+                required
+              >
+                {categories.map((c) => (
+                  <option key={c._id} value={c._id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-stone-300">Description</label>
+              <Input
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="e.g. Double shot espresso with organic hazelnut milk"
+                className="mt-1 text-xs"
+              />
+            </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-stone-300 mb-1.5">Category</label>
+                <label className="text-xs font-semibold text-stone-300">Points Price (pts)</label>
+                <Input
+                  type="number"
+                  value={pointsPrice}
+                  onChange={(e) => setPointsPrice(Number(e.target.value))}
+                  min={1}
+                  required
+                  className="mt-1 text-xs font-bold text-amber-400"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-stone-300">Dietary Type</label>
                 <select
-                  value={categoryId}
-                  onChange={(e) => setCategoryId(e.target.value)}
-                  className="flex h-10 w-full rounded-lg border border-stone-800 bg-stone-900 px-3 py-2 text-xs text-stone-100"
+                  value={isVeg ? "VEG" : "NON_VEG"}
+                  onChange={(e) => setIsVeg(e.target.value === "VEG")}
+                  className="w-full mt-1 px-3 py-2 bg-stone-900 border border-stone-800 rounded-lg text-xs text-white"
                 >
-                  {categories.map((c) => (
-                    <option key={c._id} value={c._id}>
-                      {c.name}
-                    </option>
-                  ))}
+                  <option value="VEG">VEGETARIAN (Green)</option>
+                  <option value="NON_VEG">NON-VEGETARIAN (Red)</option>
                 </select>
               </div>
-
-              <Input label="Points Price (1 pt = ₹1)" type="number" value={pointsPrice} onChange={(e) => setPointsPrice(Number(e.target.value))} required />
             </div>
 
-            <div className="flex items-center gap-2 pt-2">
-              <input
-                type="checkbox"
-                id="isVegCheckbox"
-                checked={isVeg}
-                onChange={(e) => setIsVeg(e.target.checked)}
-                className="rounded border-stone-800 text-amber-500 focus:ring-amber-500"
+            <div>
+              <label className="text-xs font-semibold text-stone-300">Image URL (Optional)</label>
+              <Input
+                value={image}
+                onChange={(e) => setImage(e.target.value)}
+                placeholder="https://images.unsplash.com/..."
+                className="mt-1 text-xs"
               />
-              <label htmlFor="isVegCheckbox" className="text-xs text-stone-300">
-                Vegetarian Recipe
-              </label>
             </div>
 
-            <DialogFooter className="gap-2 sm:gap-0 pt-3">
-              <Button type="button" variant="ghost" onClick={() => setItemModalOpen(false)}>
+            <DialogFooter className="pt-2">
+              <Button type="button" variant="outline" size="sm" onClick={() => setItemModalOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit" isLoading={submitting} className="font-bold">
-                Create Central Item
+              <Button type="submit" size="sm" isLoading={submitting}>
+                Save Menu Item
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal: Category Create/Edit */}
+      <Dialog open={catModalOpen} onOpenChange={setCatModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{editingCat ? `Edit Category: ${editingCat.name}` : "Create Food Category"}</DialogTitle>
+            <DialogDescription>
+              Categories structure customer ordering menus and kitchen station displays.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSaveCategory} className="space-y-4 pt-2">
+            <div>
+              <label className="text-xs font-semibold text-stone-300">Category Name</label>
+              <Input
+                value={catName}
+                onChange={(e) => setCatName(e.target.value)}
+                placeholder="e.g. Specialty Cold Brews"
+                required
+                className="mt-1 text-xs"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-stone-300">Description</label>
+              <Input
+                value={catDesc}
+                onChange={(e) => setCatDesc(e.target.value)}
+                placeholder="e.g. Steeped for 18 hours with single-origin beans"
+                className="mt-1 text-xs"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-semibold text-stone-300">Sort Priority (0-999)</label>
+                <Input
+                  type="number"
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(Number(e.target.value))}
+                  className="mt-1 text-xs font-mono"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-stone-300">Category Status</label>
+                <select
+                  value={catActive ? "ACTIVE" : "INACTIVE"}
+                  onChange={(e) => setCatActive(e.target.value === "ACTIVE")}
+                  className="w-full mt-1 px-3 py-2 bg-stone-900 border border-stone-800 rounded-lg text-xs text-white"
+                >
+                  <option value="ACTIVE">ACTIVE</option>
+                  <option value="INACTIVE">INACTIVE</option>
+                </select>
+              </div>
+            </div>
+
+            <DialogFooter className="pt-2">
+              <Button type="button" variant="outline" size="sm" onClick={() => setCatModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" size="sm" isLoading={submitting}>
+                Save Category
               </Button>
             </DialogFooter>
           </form>
@@ -275,4 +678,3 @@ export default function AdminMenuPage() {
     </PortalLayout>
   );
 }
-

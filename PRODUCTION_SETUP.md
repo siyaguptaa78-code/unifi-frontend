@@ -86,3 +86,4 @@ npx tsx -e '
 - [x] MongoDB multi-document ACID transactions preventing race conditions on points and time deduction.
 - [x] Anti-passback gate security preventing simultaneous active visits with the same NFC/RFID card.
 - [x] Zero delivery workflows: strictly in-store dine-in or pre-ordered cafe pickup.
+

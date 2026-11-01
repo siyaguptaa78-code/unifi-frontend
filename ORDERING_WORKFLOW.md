@@ -151,3 +151,4 @@ Staff and Cafe Managers have access to an enhanced kitchen management view (`/st
   - `Accept Order` -> `Start Prep` -> `Mark Ready` -> `Handover Complete`.
 - **Administrative Action:**
   - Cancel & Refund button with audit logging.
+

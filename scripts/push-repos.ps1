@@ -46,3 +46,4 @@ if ($LASTEXITCODE -eq 0) {
 
 Set-Location $RootDir
 Write-Host "`nPush sequence completed." -ForegroundColor Cyan
+

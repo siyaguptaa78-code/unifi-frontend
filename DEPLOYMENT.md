@@ -189,3 +189,4 @@ npx tsx scripts/seed.ts
    - Staff Order Terminal: `https://<VERCEL_APP>/staff/orders`
 3. **Automated Business Logic Verification:**
    - All 31 tests passing locally.
+
