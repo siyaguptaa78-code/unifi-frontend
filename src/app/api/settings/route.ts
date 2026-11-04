@@ -1,5 +1,5 @@
 import { route, ok, parseBody } from "@/lib/api";
-import { getAllSettings } from "@/services/settings.service";
+import { getAllSettings, invalidateSettingsCache } from "@/services/settings.service";
 import { SystemSetting } from "@/models";
 import { z } from "zod";
 import { logAudit } from "@/services/audit.service";
@@ -25,6 +25,7 @@ export const PUT = route(
       { value: input.value, updatedBy: user.id },
       { upsert: true, new: true }
     );
+    invalidateSettingsCache();
     await logAudit(user, "SYSTEM_SETTING_UPDATED", "SystemSetting", input.key, { value: input.value }, { ip });
     return ok(updated);
   },

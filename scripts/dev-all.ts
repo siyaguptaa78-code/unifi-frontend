@@ -26,7 +26,7 @@ async function main() {
 
   console.log("2. Starting Next.js (Frontend & Backend APIs) on http://localhost:3000...\n");
   const nextCmd = process.platform === "win32" ? "npx.cmd" : "npx";
-  const nextProcess = spawn(nextCmd, ["next", "dev", "-p", "3000"], {
+  const nextProcess = spawn(nextCmd, ["next", "dev", "--turbopack", "-p", "3000"], {
     stdio: "inherit",
     shell: true,
     env: {

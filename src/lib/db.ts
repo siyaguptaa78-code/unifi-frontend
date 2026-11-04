@@ -12,7 +12,7 @@ export async function connectDB(): Promise<typeof mongoose> {
   if (!uri) throw new Error("MONGODB_URI is not configured. See ENVIRONMENT_VARIABLES.md");
   if (!cache.promise) {
     mongoose.set("strictQuery", true);
-    cache.promise = mongoose.connect(uri, { serverSelectionTimeoutMS: 8000, maxPoolSize: 20 });
+    cache.promise = mongoose.connect(uri, { serverSelectionTimeoutMS: 8000, maxPoolSize: 10, maxIdleTimeMS: 60000 });
   }
   try {
     cache.conn = await cache.promise;

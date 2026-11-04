@@ -29,22 +29,18 @@ import {
   Flame,
 } from "lucide-react";
 import { formatINR, formatPoints, formatDateTime } from "@/lib/utils";
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
+import dynamic from "next/dynamic";
+
+const chartFallback = () => <div className="h-full w-full animate-pulse rounded-lg bg-stone-800/40" />;
+// Charts are code-split so the KPI cards render without waiting for the charting library.
+const MonthlyRevenueChart = dynamic(
+  () => import("@/components/admin/dashboard-charts").then((m) => m.MonthlyRevenueChart),
+  { ssr: false, loading: chartFallback }
+);
+const OrderTrendChart = dynamic(
+  () => import("@/components/admin/dashboard-charts").then((m) => m.OrderTrendChart),
+  { ssr: false, loading: chartFallback }
+);
 
 export default function AdminDashboardPage() {
   const [data, setData] = useState<any>(null);
@@ -220,24 +216,7 @@ export default function AdminDashboardPage() {
           <CardContent>
             <div className="h-64 w-full">
               {charts.monthlyRevenue && charts.monthlyRevenue.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={charts.monthlyRevenue} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#d97706" stopOpacity={0.4} />
-                        <stop offset="95%" stopColor="#d97706" stopOpacity={0.0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#292524" vertical={false} />
-                    <XAxis dataKey="month" stroke="#78716c" fontSize={11} tickLine={false} />
-                    <YAxis stroke="#78716c" fontSize={11} tickLine={false} tickFormatter={(v) => `₹${v / 1000}k`} />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: "#1c1917", borderColor: "#44403c", borderRadius: 8, fontSize: 12 }}
-                      formatter={(v: any) => [formatINR(v), "Revenue"]}
-                    />
-                    <Area type="monotone" dataKey="revenue" stroke="#d97706" strokeWidth={2} fillOpacity={1} fill="url(#colorRev)" />
-                  </AreaChart>
-                </ResponsiveContainer>
+                <MonthlyRevenueChart data={charts.monthlyRevenue} />
               ) : (
                 <div className="h-full flex items-center justify-center text-xs text-stone-400">
                   Insufficient historical revenue records.
@@ -261,18 +240,7 @@ export default function AdminDashboardPage() {
           <CardContent>
             <div className="h-64 w-full">
               {charts.orderTrend && charts.orderTrend.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={charts.orderTrend} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#292524" vertical={false} />
-                    <XAxis dataKey="date" stroke="#78716c" fontSize={10} tickLine={false} tickFormatter={(d) => d.slice(5)} />
-                    <YAxis stroke="#78716c" fontSize={11} tickLine={false} />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: "#1c1917", borderColor: "#44403c", borderRadius: 8, fontSize: 12 }}
-                      formatter={(v: any) => [v, "Orders Placed"]}
-                    />
-                    <Bar dataKey="orders" fill="#f59e0b" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+                <OrderTrendChart data={charts.orderTrend} />
               ) : (
                 <div className="h-full flex items-center justify-center text-xs text-stone-400">
                   No orders recorded in the past 30 days.

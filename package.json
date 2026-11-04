@@ -4,10 +4,11 @@
   "private": true,
   "description": "UniCafe - Multi-location cafe membership, ordering, access and franchise management platform",
   "scripts": {
-    "dev": "next dev -p 3000",
+    "dev": "next dev --turbopack -p 3000",
     "dev:all": "tsx scripts/dev-all.ts",
     "build": "next build",
     "start": "next start -p 3000",
+    "preview": "next build && next start -p 3000",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "db:local": "tsx scripts/local-db.ts",
