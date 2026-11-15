@@ -24,6 +24,14 @@ const cafeSchema = new Schema(
     manager: { type: Schema.Types.ObjectId, ref: "User" },
     status: { type: String, enum: ["ACTIVE", "INACTIVE", "COMING_SOON"], default: "ACTIVE" },
     image: String,
+    // Branch-wise points budget assigned by Super Admin (usage is computed from orders).
+    pointsAllocated: { type: Number, default: 0, min: 0 },
+    pointsHistory: {
+      type: [{ points: Number, note: String, kind: { type: String, enum: ["ALLOCATION", "REWARD"], default: "ALLOCATION" }, by: { type: Schema.Types.ObjectId, ref: "User" }, at: { type: Date, default: Date.now }, _id: false }],
+      default: [],
+    },
+    // Franchise owner / manager / staff of this cafe may only log in from these IPs (empty = no restriction).
+    allowedIps: { type: [String], default: [] },
     isDemo: { type: Boolean, default: false },
   },
   { timestamps: true }

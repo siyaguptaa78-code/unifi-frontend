@@ -11,6 +11,9 @@ const paymentSchema = new Schema(
     customer: { type: Schema.Types.ObjectId, ref: "User", required: true },
     purpose: { type: String, enum: ["MEMBERSHIP_PURCHASE", "MEMBERSHIP_RECHARGE"], required: true },
     amount: { type: Number, required: true, min: 1 },
+    // Snapshot of the recharge plan chosen at checkout (benefits are fixed at order creation).
+    pointsGranted: { type: Number, min: 0 },
+    hoursGranted: { type: Number, min: 0 },
     currency: { type: String, default: "INR" },
     provider: { type: String, enum: ["RAZORPAY", "DEMO"], required: true },
     providerOrderId: { type: String, required: true },

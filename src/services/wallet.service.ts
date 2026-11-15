@@ -12,7 +12,7 @@ type LedgerBase = {
   points: number;
   reference: string;
   description: string;
-  refModel?: "Payment" | "Order" | "AuditLog";
+  refModel?: "Payment" | "Order" | "AuditLog" | "BookSale" | "User";
   refId?: Id;
   cafe?: Id | null;
   performedBy?: Id;
@@ -28,11 +28,11 @@ const opt = (session?: ClientSession) => (session ? { session } : {});
  * if it cannot be written the debit is rolled back (by the transaction, or by compensation when
  * transactions are unavailable).
  */
-export async function debitPoints(input: LedgerBase & { source: "ORDER" | "ADMIN" }) {
+export async function debitPoints(input: LedgerBase & { source: "ORDER" | "ADMIN" | "BOOK" }) {
   if (!Number.isInteger(input.points) || input.points <= 0) throw Errors.badRequest("Invalid points amount");
   const updated = await Membership.findOneAndUpdate(
     { customer: input.customerId, status: "ACTIVE", pointsBalance: { $gte: input.points } },
-    { $inc: { pointsBalance: -input.points, totalPointsSpent: input.source === "ORDER" ? input.points : 0 } },
+    { $inc: { pointsBalance: -input.points, totalPointsSpent: input.source === "ADMIN" ? 0 : input.points } },
     { new: true, ...opt(input.session) }
   );
   if (!updated) {
@@ -71,7 +71,7 @@ export async function debitPoints(input: LedgerBase & { source: "ORDER" | "ADMIN
     if (!input.session) {
       await Membership.updateOne(
         { _id: updated._id },
-        { $inc: { pointsBalance: input.points, totalPointsSpent: input.source === "ORDER" ? -input.points : 0 } }
+        { $inc: { pointsBalance: input.points, totalPointsSpent: input.source === "ADMIN" ? 0 : -input.points } }
       );
     }
     if ((e as { code?: number }).code === 11000) throw Errors.conflict("These points have already been debited for this reference");
@@ -80,16 +80,23 @@ export async function debitPoints(input: LedgerBase & { source: "ORDER" | "ADMIN
 }
 
 /** Credits points (recharge, refund, admin adjustment) with a mandatory ledger entry. */
-export async function creditPoints(input: LedgerBase & { source: "RECHARGE" | "ORDER_REFUND" | "ADMIN"; allowInactive?: boolean }) {
+export async function creditPoints(
+  input: LedgerBase & { source: "RECHARGE" | "ORDER_REFUND" | "ADMIN" | "REFERRAL" | "BOOK_REFUND"; allowInactive?: boolean }
+) {
   if (!Number.isInteger(input.points) || input.points <= 0) throw Errors.badRequest("Invalid points amount");
   const inc: Record<string, number> = { pointsBalance: input.points };
-  if (input.source === "RECHARGE") inc.totalPointsCredited = input.points;
-  if (input.source === "ORDER_REFUND") {
+  if (input.source === "RECHARGE" || input.source === "REFERRAL") inc.totalPointsCredited = input.points;
+  if (input.source === "ORDER_REFUND" || input.source === "BOOK_REFUND") {
     inc.totalPointsRefunded = input.points;
   }
   const updated = await Membership.findOneAndUpdate({ customer: input.customerId }, { $inc: inc }, { new: true, ...opt(input.session) });
   if (!updated) throw Errors.notFound("Membership");
-  const type = input.source === "RECHARGE" ? "CREDIT" : input.source === "ORDER_REFUND" ? "REFUND" : "ADJUSTMENT";
+  const type =
+    input.source === "RECHARGE" || input.source === "REFERRAL"
+      ? "CREDIT"
+      : input.source === "ORDER_REFUND" || input.source === "BOOK_REFUND"
+        ? "REFUND"
+        : "ADJUSTMENT";
   try {
     const [entry] = await PointsLedger.create(
       [

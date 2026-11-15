@@ -26,6 +26,41 @@ export default function ManagerMenuPage() {
   const [requestedPrice, setRequestedPrice] = useState<number>(0);
   const [submitting, setSubmitting] = useState(false);
 
+  // Create a cafe-only menu item
+  const [createOpen, setCreateOpen] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [newItem, setNewItem] = useState({ name: "", description: "", category: "", pointsPrice: 150, isVeg: true });
+  const [creating, setCreating] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/menu/categories")
+      .then((r) => r.json())
+      .then((j) => setCategories(j.data || []))
+      .catch(() => setCategories([]));
+  }, []);
+
+  const handleCreateItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreating(true);
+    try {
+      const res = await fetch("/api/menu/items", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...newItem, category: newItem.category || categories[0]?._id, cafeId: selectedCafeId }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error?.message || "Could not create item");
+      toast.success(`"${newItem.name}" added to this cafe menu`);
+      setCreateOpen(false);
+      setNewItem({ name: "", description: "", category: "", pointsPrice: 150, isVeg: true });
+      loadMenu();
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setCreating(false);
+    }
+  };
+
   useEffect(() => {
     async function loadCafes() {
       try {
@@ -114,10 +149,13 @@ export default function ManagerMenuPage() {
     <PortalLayout allowedRoles={["MANAGER", "FRANCHISE_OWNER", "SUPER_ADMIN"]}>
       <PageHeader
         title="Cafe Menu Governance"
-        description="Manage daily item availability and submit local cafe price requests."
+        description="Create items for your cafe, manage daily availability and submit local price requests."
         badge="Menu Availability"
         action={
           <div className="flex items-center gap-2">
+            <Button size="sm" onClick={() => setCreateOpen(true)} disabled={!selectedCafeId} className="gap-1 h-8 text-xs">
+              <Plus className="h-3.5 w-3.5" /> Add Item
+            </Button>
             <span className="text-xs text-stone-400">Cafe:</span>
             <select
               value={selectedCafeId}
@@ -160,6 +198,11 @@ export default function ManagerMenuPage() {
                       <div className="flex items-center gap-2">
                         <span className={`h-2 w-2 rounded-full ${item.isVeg ? "bg-emerald-500" : "bg-red-500"}`} />
                         <span>{item.name}</span>
+                        {item.scope === "LOCAL" && (
+                          <Badge variant="info" className="text-[9px]">
+                            This cafe only
+                          </Badge>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell className="text-xs text-stone-400">
@@ -219,6 +262,58 @@ export default function ManagerMenuPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Create Item Modal */}
+      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-base font-bold">Add a menu item</DialogTitle>
+            <DialogDescription>
+              The item is available immediately at {cafes.find((c) => c._id === selectedCafeId)?.name ?? "this cafe"} only.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleCreateItem} className="space-y-3 text-xs">
+            <Input label="Item name" value={newItem.name} onChange={(e) => setNewItem({ ...newItem, name: e.target.value })} required />
+            <Input label="Description" value={newItem.description} onChange={(e) => setNewItem({ ...newItem, description: e.target.value })} />
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-stone-300 mb-1.5">Category</label>
+                <select
+                  value={newItem.category || categories[0]?._id || ""}
+                  onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
+                  className="w-full bg-stone-900 border border-stone-800 rounded-lg text-xs px-3 py-2 text-white"
+                >
+                  {categories.map((c) => (
+                    <option key={c._id} value={c._id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <Input
+                label="Price (points)"
+                type="number"
+                min={1}
+                value={newItem.pointsPrice}
+                onChange={(e) => setNewItem({ ...newItem, pointsPrice: Number(e.target.value) })}
+                required
+              />
+            </div>
+            <label className="flex items-center gap-2 text-stone-300">
+              <input type="checkbox" checked={newItem.isVeg} onChange={(e) => setNewItem({ ...newItem, isVeg: e.target.checked })} />
+              Vegetarian
+            </label>
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button type="button" variant="ghost" onClick={() => setCreateOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" isLoading={creating} className="font-bold">
+                Create item
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* Price Override Modal */}
       <Dialog open={priceModalOpen} onOpenChange={setPriceModalOpen}>

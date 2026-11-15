@@ -48,3 +48,18 @@ body {
   background: #78716c;
 }
 
+
+/* Printable invoices: hide app chrome and print on white. */
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .invoice-sheet {
+    max-width: none !important;
+    margin: 0 !important;
+  }
+}

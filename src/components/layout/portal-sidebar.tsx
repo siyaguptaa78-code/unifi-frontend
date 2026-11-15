@@ -23,6 +23,10 @@ import {
   Coffee,
   ExternalLink,
   ChevronRight,
+  BookOpen,
+  Receipt,
+  Gift,
+  Flame,
 } from "lucide-react";
 import { useAuth } from "@/components/providers";
 import { ROLE_LABELS, type Role } from "@/lib/rbac";
@@ -74,6 +78,7 @@ export function PortalSidebar() {
               { href: "/admin/franchises", label: "Franchises", icon: Building2 },
               { href: "/admin/franchise-packages", label: "License Packages", icon: Package },
               { href: "/admin/menu", label: "Menu Governance", icon: UtensilsCrossed },
+              { href: "/admin/books", label: "Cafe Books", icon: BookOpen },
               { href: "/admin/orders", label: "Universal Orders", icon: ShoppingBag },
             ],
           },
@@ -88,6 +93,7 @@ export function PortalSidebar() {
             title: "System Control",
             items: [
               { href: "/admin/settings", label: "Platform Settings", icon: Settings },
+              { href: "/admin/referrals", label: "Refer & Earn", icon: Gift },
               { href: "/admin/audit-logs", label: "Audit Logs", icon: ShieldAlert },
             ],
           },
@@ -115,6 +121,8 @@ export function PortalSidebar() {
               { href: "/franchise/cafes", label: "Locations", icon: Store },
               { href: "/franchise/orders", label: "Orders & Sales", icon: ShoppingBag },
               { href: "/franchise/menu", label: "Menu Customization", icon: UtensilsCrossed },
+              { href: "/franchise/trendy-rewards", label: "Trendy Food Rewards", icon: Flame },
+              { href: "/franchise/books", label: "Cafe Books", icon: BookOpen },
               { href: "/franchise/staff", label: "Branch Staff", icon: UserCheck },
               { href: "/franchise/reports", label: "Revenue Reports", icon: FileBarChart },
             ],
@@ -127,7 +135,9 @@ export function PortalSidebar() {
             items: [
               { href: "/manager/dashboard", label: "Dashboard", icon: LayoutDashboard },
               { href: "/manager/orders", label: "Kitchen Queue", icon: ShoppingBag },
-              { href: "/manager/menu", label: "Menu Availability", icon: UtensilsCrossed },
+              { href: "/manager/menu", label: "Menu & Items", icon: UtensilsCrossed },
+              { href: "/staff/billing", label: "Counter Billing", icon: Receipt },
+              { href: "/manager/books", label: "Cafe Books", icon: BookOpen },
               { href: "/manager/staff", label: "Staff Roster", icon: UserCheck },
               { href: "/manager/visits", label: "Check-in Records", icon: History },
               { href: "/manager/reports", label: "Daily Sales", icon: FileBarChart },
@@ -141,6 +151,8 @@ export function PortalSidebar() {
             items: [
               { href: "/staff/dashboard", label: "Counter Overview", icon: LayoutDashboard },
               { href: "/staff/scan-card", label: "NFC / RFID Gate Scanner", icon: ScanLine },
+              { href: "/staff/billing", label: "Counter Billing", icon: Receipt },
+              { href: "/staff/books", label: "Book Desk", icon: BookOpen },
               { href: "/staff/orders", label: "Kitchen Orders", icon: ShoppingBag },
               { href: "/staff/visits", label: "Active Visits", icon: History },
             ],

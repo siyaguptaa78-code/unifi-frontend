@@ -26,9 +26,13 @@ import {
   Building2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { BranchControlsDialog } from "@/components/admin/branch-controls-dialog";
+import { formatPoints } from "@/lib/utils";
 
 export default function AdminCafesPage() {
   const [cafes, setCafes] = useState<any[]>([]);
+  const [pointsSummary, setPointsSummary] = useState<Record<string, any>>({});
+  const [controlsFor, setControlsFor] = useState<any>(null);
   const [users, setUsers] = useState<any[]>([]);
   const [franchises, setFranchises] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,11 +60,19 @@ export default function AdminCafesPage() {
 
   const loadData = async () => {
     try {
-      const [cRes, uRes, fRes] = await Promise.all([
+      const [cRes, uRes, fRes, pRes] = await Promise.all([
         fetch("/api/cafes"),
         fetch("/api/staff"),
         fetch("/api/franchises"),
+        fetch("/api/cafes/points-summary"),
       ]);
+      if (pRes.ok) {
+        const rows = (await pRes.json()).data || [];
+        const map: Record<string, any> = {};
+        for (const r of rows) map[r._id] = r;
+        setPointsSummary(map);
+        setControlsFor((cur: any) => (cur ? map[cur._id] ?? null : null));
+      }
 
       if (cRes.ok) {
         const cJson = await cRes.json();
@@ -227,6 +239,7 @@ export default function AdminCafesPage() {
                   <TableHead>Ownership</TableHead>
                   <TableHead>Online Pre-Orders</TableHead>
                   <TableHead>Kitchen Prep</TableHead>
+                  <TableHead>Branch Points</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -274,6 +287,22 @@ export default function AdminCafesPage() {
                     <TableCell className="font-mono text-xs text-amber-400">
                       ~{c.estimatedPrepMinutes || 15} min
                     </TableCell>
+                    <TableCell className="text-xs">
+                      {pointsSummary[c._id] ? (
+                        <div>
+                          <div className="font-bold text-amber-400">
+                            {formatPoints(pointsSummary[c._id].pointsUsed)}
+                            <span className="text-stone-500 font-normal"> used</span>
+                          </div>
+                          <div className="text-[10px] text-stone-400">of {formatPoints(pointsSummary[c._id].pointsAllocated)} allocated</div>
+                          {pointsSummary[c._id].allowedIps?.length > 0 && (
+                            <div className="text-[10px] text-blue-400">🔒 {pointsSummary[c._id].allowedIps.length} login IP(s)</div>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-stone-600">—</span>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <Badge
                         variant={c.status === "ACTIVE" ? "success" : c.status === "MAINTENANCE" ? "warning" : "destructive"}
@@ -282,7 +311,15 @@ export default function AdminCafesPage() {
                         {c.status || "ACTIVE"}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right whitespace-nowrap">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setControlsFor(pointsSummary[c._id] ?? null)}
+                        className="text-xs text-amber-400 hover:text-amber-300 h-8"
+                      >
+                        Points &amp; Access
+                      </Button>
                       <Button
                         variant="ghost"
                         size="sm"
@@ -300,6 +337,8 @@ export default function AdminCafesPage() {
           )}
         </CardContent>
       </Card>
+
+      <BranchControlsDialog summary={controlsFor} onClose={() => setControlsFor(null)} onSaved={loadData} />
 
       {/* Modal: Add / Edit Cafe */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>

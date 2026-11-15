@@ -58,13 +58,29 @@ export default function AdminMenuPage() {
   const [sortOrder, setSortOrder] = useState(0);
   const [catActive, setCatActive] = useState(true);
 
+  const [trendingIds, setTrendingIds] = useState<string[]>([]);
+
+  const setTrendingMode = async (item: any, mode: "AUTO" | "PINNED" | "HIDDEN") => {
+    const res = await fetch(`/api/menu/items/${item._id}/trending`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mode }),
+    });
+    const json = await res.json();
+    if (!res.ok) return toast.error(json.error?.message || "Could not update Trendy Food");
+    toast.success(mode === "PINNED" ? `${item.name} pinned as Trendy` : mode === "HIDDEN" ? `${item.name} hidden from Trendy` : `${item.name} set to automatic`);
+    loadData();
+  };
+
   const loadData = async () => {
     try {
-      const [itRes, catRes, appRes] = await Promise.all([
+      const [itRes, catRes, appRes, trRes] = await Promise.all([
         fetch("/api/menu/items"),
         fetch("/api/menu/categories"),
         fetch("/api/menu/approvals"),
+        fetch("/api/menu/trending"),
       ]);
+      if (trRes.ok) setTrendingIds(((await trRes.json()).data || []).map((t: any) => t.menuItemId));
 
       if (itRes.ok) setItems((await itRes.json()).data || []);
       if (catRes.ok) {
@@ -351,6 +367,7 @@ export default function AdminMenuPage() {
                       <TableHead>Type</TableHead>
                       <TableHead className="text-right">Price (Points)</TableHead>
                       <TableHead>Availability</TableHead>
+                      <TableHead>Trendy Food</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -387,6 +404,21 @@ export default function AdminMenuPage() {
                               {it.active ? "ACTIVE" : "INACTIVE"}
                             </Badge>
                           </button>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1.5">
+                            {trendingIds.includes(it._id) && <span title="Currently shown as Trendy Food">🔥</span>}
+                            <select
+                              value={it.trendingMode || "AUTO"}
+                              onChange={(e) => setTrendingMode(it, e.target.value as any)}
+                              className="bg-stone-950 border border-stone-800 rounded-md text-[11px] px-1.5 py-1 text-white"
+                              title="Auto = ranked by orders · Pinned = always Trendy · Hidden = never Trendy"
+                            >
+                              <option value="AUTO">Auto</option>
+                              <option value="PINNED">Pinned</option>
+                              <option value="HIDDEN">Hidden</option>
+                            </select>
+                          </div>
                         </TableCell>
                         <TableCell className="text-right">
                           <Button

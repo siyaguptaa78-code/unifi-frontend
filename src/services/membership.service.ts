@@ -9,8 +9,9 @@ import { Order } from "@/models/Order";
 import { Errors } from "@/lib/errors";
 import { randomDigits, randomHex } from "@/lib/ids";
 import { creditPoints } from "@/services/wallet.service";
-import { getMembershipConfig, getSetting } from "@/services/settings.service";
+import { getMembershipConfig, getSetting, getRechargePlans } from "@/services/settings.service";
 import { notify } from "@/services/notification.service";
+import { awardReferralOnFirstRecharge } from "@/services/referral.service";
 
 type Id = string | Types.ObjectId;
 const opt = (session?: ClientSession) => (session ? { session } : {});
@@ -59,7 +60,13 @@ export async function applyMembershipRecharge(paymentId: Id, session?: ClientSes
   const already = await MembershipTransaction.findOne({ payment: payment._id }, null, opt(session)).lean();
   if (already) return { alreadyApplied: true as const };
 
-  const cfg = await getMembershipConfig();
+  const base = await getMembershipConfig();
+  // Benefits were fixed when the payment order was created (plan snapshot); older payments fall back to settings.
+  const cfg = {
+    points: payment.pointsGranted ?? base.points,
+    hours: payment.hoursGranted ?? base.hours,
+  };
+  const resetsHours = cfg.hours > 0;
   const before = await Membership.findOne({ customer: payment.customer }, null, opt(session));
   if (!before) throw Errors.notFound("Membership");
   const isFirst = (before.rechargeCount ?? 0) === 0;
@@ -84,11 +91,10 @@ export async function applyMembershipRecharge(paymentId: Id, session?: ClientSes
     {
       $set: {
         status: "ACTIVE",
-        remainingMinutes: cfg.minutes,
+        ...(resetsHours ? { remainingMinutes: cfg.hours * 60, lowHoursNotifiedAt: null } : {}),
         lastRechargeAt: now,
         ...(before.activatedAt ? {} : { activatedAt: now }),
         lowPointsNotifiedAt: null,
-        lowHoursNotifiedAt: null,
       },
       $inc: { rechargeCount: 1 },
     },
@@ -106,7 +112,7 @@ export async function applyMembershipRecharge(paymentId: Id, session?: ClientSes
         pointsBefore: before.pointsBalance,
         pointsAfter: updated!.pointsBalance,
         minutesBefore: before.remainingMinutes,
-        minutesAfter: cfg.minutes,
+        minutesAfter: resetsHours ? cfg.hours * 60 : before.remainingMinutes,
         payment: payment._id,
         reference: payment.receipt,
         note: payment.isDemo ? "DEMO payment — simulated, not a real transaction" : undefined,
@@ -129,9 +135,11 @@ export async function applyMembershipRecharge(paymentId: Id, session?: ClientSes
     payment.customer,
     "MEMBERSHIP_RECHARGE",
     isFirst ? "Membership activated" : "Membership recharged",
-    `${cfg.points.toLocaleString("en-IN")} points added. Balance: ${updated!.pointsBalance.toLocaleString("en-IN")} points. Hours reset to ${cfg.hours}.`,
+    `${cfg.points.toLocaleString("en-IN")} points added. Balance: ${updated!.pointsBalance.toLocaleString("en-IN")} points.${resetsHours ? ` Hours reset to ${cfg.hours}.` : ""}`,
     { link: "/customer/membership", session, isDemo: payment.isDemo }
   );
+
+  if (isFirst) await awardReferralOnFirstRecharge(payment.customer, payment._id, session, payment.isDemo);
 
   return { alreadyApplied: false as const, membership: updated };
 }
@@ -184,6 +192,7 @@ export async function getMembershipOverview(customerId: Id) {
     getMembershipConfig(),
   ]);
   if (!membership) throw Errors.notFound("Membership");
+  const plans = await getRechargePlans();
   const lowPoints = Number(await getSetting("alerts.lowPointsThreshold"));
   const lowHours = Number(await getSetting("alerts.lowHoursThreshold"));
   return {
@@ -194,6 +203,7 @@ export async function getMembershipOverview(customerId: Id) {
     recentVisits,
     activeVisit,
     config: cfg,
+    plans,
     flags: {
       lowPoints: membership.status === "ACTIVE" && membership.pointsBalance < lowPoints,
       lowHours: membership.status === "ACTIVE" && membership.remainingMinutes > 0 && membership.remainingMinutes < lowHours * 60,

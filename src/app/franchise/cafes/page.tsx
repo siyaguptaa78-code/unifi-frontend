@@ -7,10 +7,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 import { Spinner } from "@/components/ui/spinner";
+import { Button } from "@/components/ui/button";
+import { Eye } from "lucide-react";
+import { CafeDetailsDialog } from "@/components/cafes/cafe-details-dialog";
 
 export default function FranchiseCafesPage() {
   const [cafes, setCafes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [viewCafeId, setViewCafeId] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -53,6 +57,7 @@ export default function FranchiseCafesPage() {
                   <TableHead>Opening Hours</TableHead>
                   <TableHead>Seating Capacity</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -76,6 +81,18 @@ export default function FranchiseCafesPage() {
                         {c.status}
                       </Badge>
                     </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setViewCafeId(c._id)}
+                        className="h-8 w-8 p-0"
+                        title="View cafe details"
+                        aria-label={`View details of ${c.name}`}
+                      >
+                        <Eye className="h-4 w-4 text-amber-400" />
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -83,6 +100,8 @@ export default function FranchiseCafesPage() {
           )}
         </CardContent>
       </Card>
+
+      <CafeDetailsDialog cafeId={viewCafeId} onClose={() => setViewCafeId(null)} />
     </PortalLayout>
   );
 }

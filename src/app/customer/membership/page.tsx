@@ -29,6 +29,7 @@ export default function CustomerMembershipPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [orderPayload, setOrderPayload] = useState<any>(null);
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
 
   const loadData = async () => {
     try {
@@ -51,7 +52,11 @@ export default function CustomerMembershipPage() {
   const handleStartRecharge = async () => {
     setIsProcessing(true);
     try {
-      const res = await fetch("/api/payments/create-order", { method: "POST" });
+      const res = await fetch("/api/payments/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: selectedPlan?.amount }),
+      });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error?.message || "Failed to create payment order");
       setOrderPayload(json.data);
@@ -76,7 +81,10 @@ export default function CustomerMembershipPage() {
       if (!res.ok) throw new Error(json.error?.message || "Payment processing failed");
 
       if (outcome === "SUCCESS") {
-        toast.success("Payment Successful! ₹5,000 received. 5,000 points added & hours reset to 150h.");
+        const b = orderPayload.benefits;
+        toast.success(
+          `Payment successful! ${formatINR(orderPayload.amount)} received. ${formatPoints(b.points)} added${b.hours > 0 ? ` & hours reset to ${b.hours}h` : ""}.`
+        );
         setPaymentModalOpen(false);
         await refreshUser();
         await loadData();
@@ -107,6 +115,10 @@ export default function CustomerMembershipPage() {
   const cfg = data?.config;
   const points = membership?.pointsBalance ?? 0;
   const minutes = membership?.remainingMinutes ?? 0;
+  const plans: any[] = data?.plans ?? [];
+  const selectedPlan = plans.find((p) => p.amount === selectedAmount) ?? plans[plans.length - 1];
+  // Cheapest bigger plan that includes hours, offered when the chosen plan has none.
+  const upsellPlan = selectedPlan && selectedPlan.hours === 0 ? plans.find((p) => p.hours > 0 && p.amount > selectedPlan.amount) : null;
 
   return (
     <div className="min-h-screen bg-stone-950 flex flex-col">
@@ -120,7 +132,7 @@ export default function CustomerMembershipPage() {
               <Badge variant="default">Universal Access Pass</Badge>
             </h1>
             <p className="text-xs text-stone-400 mt-1">
-              Recharge your membership to credit points and refresh your 150 workspace hours.
+              Recharge to add points. Plans with cafe hours also reset your access hours.
             </p>
           </div>
 
@@ -152,54 +164,70 @@ export default function CustomerMembershipPage() {
               </div>
 
               <div className="pt-4 border-t border-stone-800 text-[11px] text-stone-400 leading-relaxed">
-                💡 <strong>Carry Forward Rule:</strong> When you recharge, all your existing points carry forward and your hours reset to a full 150 hours.
+                💡 <strong>Carry Forward Rule:</strong> Your existing points always carry forward. Plans that include hours reset your hours balance to that plan&apos;s hours.
               </div>
             </Card>
 
-            {/* Recharge Purchase Box */}
-            <div className="md:col-span-2 rounded-2xl border-2 border-amber-500/50 bg-gradient-to-br from-stone-900 via-stone-900/90 to-amber-950/30 p-8 flex flex-col justify-between shadow-xl">
-              <div>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-widest text-amber-500">
-                      Standard Recharge Package
-                    </span>
-                    <h2 className="text-2xl font-bold text-white mt-1">₹5,000 Access Recharge</h2>
-                  </div>
-                  <Badge variant="default" className="text-xs">1 Point = ₹1</Badge>
+            {/* Recharge Plans */}
+            <div className="md:col-span-2 rounded-2xl border-2 border-amber-500/50 bg-gradient-to-br from-stone-900 via-stone-900/90 to-amber-950/30 p-6 sm:p-8 flex flex-col gap-5 shadow-xl">
+              <div className="flex justify-between items-start">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-widest text-amber-500">Choose a Recharge Plan</span>
+                  <h2 className="text-xl font-bold text-white mt-1">Points for food · Hours for cafe access</h2>
                 </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
-                  <div className="rounded-xl border border-stone-800 bg-stone-950/60 p-4">
-                    <div className="flex items-center gap-2 text-xs font-bold text-amber-400 mb-1">
-                      <Coins className="h-4 w-4" />
-                      <span>+5,000 Points Added</span>
-                    </div>
-                    <p className="text-[11px] text-stone-400">
-                      Spendable on any espresso, cold brew, bakery or meal item across all 5 cafes.
-                    </p>
-                  </div>
-
-                  <div className="rounded-xl border border-stone-800 bg-stone-950/60 p-4">
-                    <div className="flex items-center gap-2 text-xs font-bold text-amber-400 mb-1">
-                      <Clock className="h-4 w-4" />
-                      <span>150 Hours Refresh</span>
-                    </div>
-                    <p className="text-[11px] text-stone-400">
-                      Your hours counter resets to 150 hours on every successful recharge.
-                    </p>
-                  </div>
-                </div>
+                <Badge variant="default" className="text-xs">1 Point = ₹1</Badge>
               </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {plans.map((p: any) => {
+                  const selected = selectedPlan?.amount === p.amount;
+                  return (
+                    <button
+                      key={p.amount}
+                      type="button"
+                      onClick={() => setSelectedAmount(p.amount)}
+                      className={`text-left rounded-xl border p-4 transition-all cursor-pointer ${
+                        selected ? "border-amber-500 bg-amber-500/10 ring-1 ring-amber-500" : "border-stone-800 bg-stone-950/60 hover:border-stone-600"
+                      }`}
+                    >
+                      <div className="text-lg font-extrabold text-white">{formatINR(p.amount)}</div>
+                      <div className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-amber-400">
+                        <Coins className="h-3.5 w-3.5" /> +{formatPoints(p.points)}
+                      </div>
+                      <div className={`mt-1 flex items-center gap-1.5 text-xs font-semibold ${p.hours > 0 ? "text-emerald-400" : "text-stone-500"}`}>
+                        <Clock className="h-3.5 w-3.5" /> {p.hours > 0 ? `${p.hours} hours access` : "No cafe hours"}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Upsell: a points-only plan was chosen but a plan with free hours exists */}
+              {upsellPlan && (
+                <div className="rounded-xl border border-emerald-500/40 bg-emerald-950/30 p-4 text-xs text-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-start gap-2">
+                    <Sparkles className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>
+                      This plan gives points only. Add just <strong>{formatINR(upsellPlan.amount - (selectedPlan?.amount ?? 0))}</strong> more
+                      (recharge {formatINR(upsellPlan.amount)}) and also get <strong>{upsellPlan.hours} free cafe hours</strong> plus{" "}
+                      {formatPoints(upsellPlan.points)}.
+                    </span>
+                  </div>
+                  <Button size="sm" variant="success" className="shrink-0" onClick={() => setSelectedAmount(upsellPlan.amount)}>
+                    Upgrade to {formatINR(upsellPlan.amount)}
+                  </Button>
+                </div>
+              )}
 
               <div className="pt-4 border-t border-stone-800/80 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-xs text-stone-300">
-                  Total Payable: <strong className="text-lg font-bold text-white ml-1">₹5,000</strong>
+                  Total Payable: <strong className="text-lg font-bold text-white ml-1">{formatINR(selectedPlan?.amount ?? 0)}</strong>
                 </div>
                 <Button
                   size="lg"
                   onClick={handleStartRecharge}
                   isLoading={isProcessing}
+                  disabled={!selectedPlan}
                   className="w-full sm:w-auto font-semibold gap-2 shadow-lg shadow-amber-600/30"
                 >
                   <CreditCard className="h-4 w-4" />
@@ -220,7 +248,8 @@ export default function CustomerMembershipPage() {
               <span>UniCafe Checkout</span>
             </DialogTitle>
             <DialogDescription>
-              Amount to pay: <strong>₹5,000</strong> for 5,000 points & 150 hours.
+              Amount to pay: <strong>{formatINR(orderPayload?.amount)}</strong> for {formatPoints(orderPayload?.benefits?.points)}
+              {orderPayload?.benefits?.hours > 0 ? ` & ${orderPayload.benefits.hours} hours` : ""}.
             </DialogDescription>
           </DialogHeader>
 
@@ -240,8 +269,13 @@ export default function CustomerMembershipPage() {
               <div className="text-xs text-stone-400 space-y-1 bg-stone-950 p-3 rounded-lg border border-stone-800">
                 <div>Receipt: <span className="font-mono text-stone-200">{orderPayload.receipt}</span></div>
                 <div>Customer: <span className="text-stone-200">{orderPayload.prefill?.name}</span></div>
-                <div>Points to Credit: <span className="text-amber-400 font-bold">5,000 pts</span></div>
-                <div>Hours to Set: <span className="text-white font-bold">150 Hours</span></div>
+                <div>Points to Credit: <span className="text-amber-400 font-bold">{formatPoints(orderPayload.benefits?.points)}</span></div>
+                <div>
+                  Hours:{" "}
+                  <span className="text-white font-bold">
+                    {orderPayload.benefits?.hours > 0 ? `Reset to ${orderPayload.benefits.hours} hours` : "Unchanged (points-only plan)"}
+                  </span>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3 pt-2">

@@ -9,12 +9,17 @@ const customerProfileSchema = new Schema(
     address: { line1: String, city: String, state: String, pincode: String },
     preferredCafe: { type: Schema.Types.ObjectId, ref: "Cafe" },
     marketingOptIn: { type: Boolean, default: true },
+    referralCode: { type: String, uppercase: true, trim: true },
+    referredBy: { type: Schema.Types.ObjectId, ref: "User" },
+    referralRewardedAt: Date,
     isDemo: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
 customerProfileSchema.index({ user: 1 }, { unique: true });
 customerProfileSchema.index({ customerCode: 1 }, { unique: true });
+customerProfileSchema.index({ referralCode: 1 }, { unique: true, partialFilterExpression: { referralCode: { $type: "string" } } });
+customerProfileSchema.index({ referredBy: 1 });
 
 export type CustomerProfileDoc = InferSchemaType<typeof customerProfileSchema> & { _id: Types.ObjectId };
 export const CustomerProfile: Model<CustomerProfileDoc> =

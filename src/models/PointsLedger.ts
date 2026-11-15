@@ -10,10 +10,10 @@ const pointsLedgerSchema = new Schema(
     customer: { type: Schema.Types.ObjectId, ref: "User", required: true },
     membership: { type: Schema.Types.ObjectId, ref: "Membership", required: true },
     type: { type: String, enum: ["CREDIT", "DEBIT", "REFUND", "ADJUSTMENT"], required: true },
-    source: { type: String, enum: ["RECHARGE", "ORDER", "ORDER_REFUND", "ADMIN"], required: true },
+    source: { type: String, enum: ["RECHARGE", "ORDER", "ORDER_REFUND", "ADMIN", "REFERRAL", "BOOK", "BOOK_REFUND"], required: true },
     points: { type: Number, required: true },
     balanceAfter: { type: Number, required: true, min: 0 },
-    refModel: { type: String, enum: ["Payment", "Order", "AuditLog", null] },
+    refModel: { type: String, enum: ["Payment", "Order", "AuditLog", "BookSale", "User", null] },
     refId: { type: Schema.Types.ObjectId },
     reference: { type: String, required: true },
     description: String,
@@ -27,7 +27,7 @@ pointsLedgerSchema.index({ customer: 1, createdAt: -1 });
 pointsLedgerSchema.index({ type: 1, createdAt: -1 });
 pointsLedgerSchema.index(
   { source: 1, refId: 1, type: 1 },
-  { unique: true, partialFilterExpression: { refId: { $type: "objectId" }, source: { $in: ["RECHARGE", "ORDER", "ORDER_REFUND"] } } }
+  { unique: true, partialFilterExpression: { refId: { $type: "objectId" }, source: { $in: ["RECHARGE", "ORDER", "ORDER_REFUND", "REFERRAL", "BOOK", "BOOK_REFUND"] } } }
 );
 
 export type PointsLedgerDoc = InferSchemaType<typeof pointsLedgerSchema> & { _id: Types.ObjectId };

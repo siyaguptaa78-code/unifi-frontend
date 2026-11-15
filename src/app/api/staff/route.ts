@@ -4,12 +4,20 @@ import { hashPassword } from "@/services/auth.service";
 import { User, Staff, Cafe } from "@/models";
 import { Errors } from "@/lib/errors";
 import { logAudit } from "@/services/audit.service";
+import { getCafeScope } from "@/services/scope.service";
 
 export const GET = route(
   async ({ user }) => {
     let match: Record<string, unknown> = { role: { $in: ["SUPERVISOR", "FRANCHISE_OWNER", "MANAGER", "STAFF"] } };
     if (user.role === "MANAGER" || user.role === "FRANCHISE_OWNER") {
       match = { role: { $in: ["MANAGER", "STAFF"] } };
+    }
+
+    // Cafe-scoped roles only see people who work at their own cafes.
+    if (user.role !== "SUPER_ADMIN") {
+      const scope = (await getCafeScope(user)) ?? [];
+      const staffInScope = await Staff.find({ cafes: { $in: scope } }).select("user").lean();
+      match._id = { $in: staffInScope.map((s) => s.user) };
     }
 
     const users = await User.find(match).select("name email mobile role status createdAt").lean();
@@ -33,6 +41,17 @@ export const GET = route(
 export const POST = route(
   async ({ req, user, ip }) => {
     const input = await parseBody(req, internalUserSchema);
+
+    // Privilege guard: managers may only add staff, franchise owners managers/staff, and only
+    // for their own cafes. Only the Super Admin can create supervisors, owners or admins.
+    if (user.role !== "SUPER_ADMIN") {
+      const allowed = user.role === "FRANCHISE_OWNER" ? ["MANAGER", "STAFF"] : ["STAFF"];
+      if (!allowed.includes(input.role)) throw Errors.forbidden(`You can only create ${allowed.join(" / ").toLowerCase()} accounts`);
+      const scope = (await getCafeScope(user)) ?? [];
+      const requested = input.cafes ?? [];
+      if (!requested.length) throw Errors.badRequest("Assign at least one of your cafes");
+      if (requested.some((c) => !scope.some((s) => String(s) === c))) throw Errors.forbidden("You can only assign people to your own cafes");
+    }
 
     const [emailExists, mobileExists] = await Promise.all([
       User.exists({ email: input.email.toLowerCase() }),

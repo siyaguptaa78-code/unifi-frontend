@@ -32,6 +32,10 @@ export default function StaffScanCardPage() {
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<any>(null);
   const [scanError, setScanError] = useState<string | null>(null);
+  // OTP step: after a tap the customer receives a code that staff must enter.
+  const [otpRequest, setOtpRequest] = useState<any>(null);
+  const [otpCode, setOtpCode] = useState("");
+  const [verifying, setVerifying] = useState(false);
 
   // Load cafes
   useEffect(() => {
@@ -65,6 +69,8 @@ export default function StaffScanCardPage() {
     setIsScanning(true);
     setScanResult(null);
     setScanError(null);
+    setOtpRequest(null);
+    setOtpCode("");
 
     try {
       const res = await fetch("/api/visits/scan", {
@@ -81,13 +87,49 @@ export default function StaffScanCardPage() {
       if (!res.ok) {
         throw new Error(json.error?.message || "Scan failed");
       }
-      setScanResult(json.data);
-      toast.success(json.data.message || "Card scanned successfully");
+      if (json.data.otpRequired) {
+        setOtpRequest({ ...json.data, uid: cardUid.trim(), mode: scanMode });
+        toast.info(json.data.message || "OTP sent to customer");
+      } else {
+        setScanResult(json.data);
+        toast.success(json.data.message || "Card scanned successfully");
+      }
     } catch (err: any) {
       setScanError(err.message || "Card tap rejected");
       toast.error(err.message || "Scan failed");
     } finally {
       setIsScanning(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!otpRequest) return;
+    setVerifying(true);
+    setScanError(null);
+    try {
+      const res = await fetch("/api/visits/scan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          uid: otpRequest.uid,
+          cafeId: otpRequest.cafe.id,
+          mode: otpRequest.mode,
+          otpRequestId: otpRequest.otpRequestId,
+          otp: otpCode.trim(),
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error?.message || "Verification failed");
+      setScanResult(json.data);
+      setOtpRequest(null);
+      setOtpCode("");
+      toast.success(json.data.message || "Verified");
+    } catch (err: any) {
+      setScanError(err.message || "Verification failed");
+      toast.error(err.message || "Verification failed");
+    } finally {
+      setVerifying(false);
     }
   };
 
@@ -122,12 +164,12 @@ export default function StaffScanCardPage() {
                 </div>
               </div>
 
-              {/* Cafe Selector */}
-              <div className="text-right">
-                <label className="text-[10px] text-stone-400 block mb-1">Terminal Cafe Location</label>
+              {/* Staff work at their assigned cafe; a selector only appears for multi-cafe accounts. */}
+              {cafes.length > 1 && (
                 <select
                   value={selectedCafeId}
                   onChange={(e) => setSelectedCafeId(e.target.value)}
+                  aria-label="Cafe"
                   className="bg-stone-950 border border-stone-800 rounded-lg text-xs font-semibold px-2.5 py-1.5 text-white"
                 >
                   {cafes.map((c) => (
@@ -136,7 +178,7 @@ export default function StaffScanCardPage() {
                     </option>
                   ))}
                 </select>
-              </div>
+              )}
             </div>
 
             {/* Mode selector */}
@@ -207,6 +249,38 @@ export default function StaffScanCardPage() {
                 </div>
               </div>
             </form>
+
+            {/* OTP confirmation step */}
+            {otpRequest && (
+              <form onSubmit={handleVerifyOtp} className="p-5 rounded-2xl border border-amber-500/40 bg-amber-950/20 space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="text-sm font-bold text-white">
+                    Confirm {otpRequest.action === "ENTRY" ? "check-in" : "check-out"} for {otpRequest.customer?.name}
+                  </div>
+                  <Badge variant="warning">OTP SENT</Badge>
+                </div>
+                <p className="text-xs text-stone-300">
+                  A 6-digit code was sent to the customer{otpRequest.customer?.mobileMasked ? ` (${otpRequest.customer.mobileMasked})` : ""} and is shown in
+                  their UniCafe app. Ask them for it. Valid for 5 minutes.
+                </p>
+                <div className="flex gap-2">
+                  <Input
+                    value={otpCode}
+                    onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))}
+                    placeholder="Enter 6-digit OTP"
+                    inputMode="numeric"
+                    autoFocus
+                    className="font-mono text-lg tracking-[0.4em] h-11"
+                  />
+                  <Button type="submit" size="lg" isLoading={verifying} disabled={otpCode.length !== 6} className="font-bold shrink-0">
+                    Verify
+                  </Button>
+                </div>
+                <button type="button" onClick={() => handleScan()} className="text-[11px] text-amber-400 underline cursor-pointer">
+                  Resend code
+                </button>
+              </form>
+            )}
 
             {/* Scan Outcome Feedback */}
             {scanResult && (

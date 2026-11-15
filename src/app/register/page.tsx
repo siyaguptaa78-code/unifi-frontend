@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Coffee, ShieldCheck, CheckCircle2 } from "lucide-react";
@@ -16,9 +16,16 @@ export default function RegisterPage() {
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [referralCode, setReferralCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { refreshUser } = useAuth();
+
+  // Pre-fill the referral code from a shared link like /register?ref=ROHAN4821
+  useEffect(() => {
+    const ref = new URLSearchParams(window.location.search).get("ref");
+    if (ref) setReferralCode(ref.toUpperCase());
+  }, []);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +42,7 @@ export default function RegisterPage() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, mobile, password, confirmPassword }),
+        body: JSON.stringify({ name, email, mobile, password, confirmPassword, referralCode }),
       });
       const json = await res.json();
       if (!res.ok) {
@@ -115,6 +122,13 @@ export default function RegisterPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
+              />
+
+              <Input
+                label="Referral Code (optional)"
+                placeholder="e.g. ROHAN4821"
+                value={referralCode}
+                onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
               />
 
               <Button type="submit" className="w-full mt-2 font-semibold" isLoading={isLoading}>

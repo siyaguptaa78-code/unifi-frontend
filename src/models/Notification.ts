@@ -17,6 +17,10 @@ export const NOTIFICATION_TYPES = [
   "VISIT_ENTRY",
   "VISIT_EXIT",
   "PROMOTION",
+  "VISIT_OTP",
+  "REFERRAL_REWARD",
+  "BOOK",
+  "CAFE_REWARD",
   "SYSTEM",
 ] as const;
 

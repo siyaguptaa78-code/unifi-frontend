@@ -62,6 +62,7 @@ function CustomerMenuContent() {
   const [vegOnly, setVegOnly] = useState(false);
   const [loading, setLoading] = useState(true);
   const [menuLoading, setMenuLoading] = useState(false);
+  const [trendingIds, setTrendingIds] = useState<string[]>([]);
 
   // Cart & Ordering Mode
   const [cart, setCart] = useState<Map<string, CartItem>>(new Map());
@@ -103,6 +104,11 @@ function CustomerMenuContent() {
     async function loadMenu() {
       setMenuLoading(true);
       try {
+        // Trendy Food for this cafe (most ordered + admin-pinned), loaded alongside the menu.
+        fetch(`/api/menu/trending?cafeId=${selectedCafeId}`)
+          .then((r) => (r.ok ? r.json() : { data: [] }))
+          .then((j) => setTrendingIds((j.data || []).map((t: any) => t.menuItemId)))
+          .catch(() => setTrendingIds([]));
         const res = await fetch(`/api/menu/cafe/${selectedCafeId}`);
         if (res.ok) {
           const json = await res.json();
@@ -167,6 +173,11 @@ function CustomerMenuContent() {
   const cartItemCount = useMemo(
     () => cartList.reduce((sum, item) => sum + item.quantity, 0),
     [cartList]
+  );
+
+  const trendyItems = useMemo(
+    () => trendingIds.map((id) => menuItems.find((m) => m._id === id)).filter(Boolean) as any[],
+    [trendingIds, menuItems]
   );
 
   const filteredItems = useMemo(() => {
@@ -409,6 +420,33 @@ function CustomerMenuContent() {
             </div>
           </div>
 
+          {/* Trendy Food strip */}
+          {!menuLoading && trendyItems.length > 0 && (
+            <div className="rounded-2xl border border-amber-500/40 bg-gradient-to-r from-amber-950/40 via-stone-900/60 to-stone-900/40 p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-lg">🔥</span>
+                <h2 className="text-sm font-bold text-white">Trendy Food</h2>
+                <span className="text-[11px] text-stone-400">Most ordered right now</span>
+              </div>
+              <div className="flex gap-3 overflow-x-auto pb-1">
+                {trendyItems.map((item) => (
+                  <div key={item._id} className="min-w-[180px] rounded-xl border border-stone-800 bg-stone-950/70 p-3 flex flex-col justify-between gap-2">
+                    <div>
+                      <div className="text-xs font-bold text-white line-clamp-1">{item.name}</div>
+                      <div className="text-[10px] text-stone-500">{item.category?.name}</div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-extrabold text-amber-400">{formatPoints(item.pointsPrice)}</span>
+                      <Button size="sm" className="h-6 px-2 text-[10px]" onClick={() => addToCart(item)}>
+                        Add
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Menu Items Grid */}
           {menuLoading ? (
             <div className="flex justify-center p-16">
@@ -447,9 +485,14 @@ function CustomerMenuContent() {
                             {item.category?.name}
                           </span>
                         </div>
-                        {item.priceOverridden && (
-                          <Badge variant="default" className="text-[9px]">Branch Special</Badge>
-                        )}
+                        <div className="flex gap-1">
+                          {trendingIds.includes(item._id) && (
+                            <Badge variant="warning" className="text-[9px]">🔥 Trendy</Badge>
+                          )}
+                          {item.priceOverridden && (
+                            <Badge variant="default" className="text-[9px]">Branch Special</Badge>
+                          )}
+                        </div>
                       </div>
 
                       <h3 className="font-bold text-sm text-white group-hover:text-amber-400 transition-colors">

@@ -18,7 +18,10 @@ import {
   AlertTriangle,
   Menu,
   X,
+  BookOpen,
+  Gift,
 } from "lucide-react";
+import { VisitOtpBanner } from "@/components/layout/visit-otp-banner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/components/providers";
@@ -56,6 +59,8 @@ export function CustomerNavbar() {
     { href: "/customer/membership", label: "Membership", icon: CreditCard },
     { href: "/customer/wallet", label: "Points Wallet", icon: Coins },
     { href: "/customer/visits", label: "Cafe Visits", icon: History },
+    { href: "/customer/books", label: "My Books", icon: BookOpen },
+    { href: "/customer/refer", label: "Refer & Earn", icon: Gift },
   ];
 
   const points = user?.membership?.pointsBalance ?? 0;
@@ -115,14 +120,15 @@ export function CustomerNavbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                title={item.label}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors ${
                   active
                     ? "bg-amber-500/15 text-amber-400 border border-amber-500/30"
                     : "text-stone-300 hover:text-white hover:bg-stone-900"
                 }`}
               >
                 <Icon className="h-3.5 w-3.5" />
-                <span>{item.label}</span>
+                <span className="hidden xl:inline">{item.label}</span>
               </Link>
             );
           })}
@@ -196,6 +202,7 @@ export function CustomerNavbar() {
           })}
         </div>
       )}
+      <VisitOtpBanner />
     </header>
   );
 }

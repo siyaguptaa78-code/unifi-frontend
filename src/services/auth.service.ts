@@ -7,6 +7,7 @@ import { withTransaction } from "@/lib/db";
 import { randomDigits, randomHex, sha256 } from "@/lib/ids";
 import { getProvider } from "@/services/notification.service";
 import { logAudit } from "@/services/audit.service";
+import { resolveReferrer } from "@/services/referral.service";
 import type { z } from "zod";
 import type { registerSchema } from "@/lib/validators";
 import type { Role } from "@/lib/rbac";
@@ -31,13 +32,14 @@ export async function registerCustomer(input: z.infer<typeof registerSchema>) {
   if (emailTaken) throw Errors.conflict("An account with this email already exists", { field: "email" });
   if (mobileTaken) throw Errors.conflict("An account with this mobile number already exists", { field: "mobile" });
 
+  const referredBy = await resolveReferrer(input.referralCode);
   const passwordHash = await hashPassword(input.password);
   const customerCode = await generateCustomerCode();
 
   return withTransaction(async (session) => {
     const opts = session ? { session } : {};
     const [user] = await User.create([{ name: input.name, email, mobile: input.mobile, passwordHash, role: "CUSTOMER" }], opts);
-    await CustomerProfile.create([{ user: user._id, customerCode }], opts);
+    await CustomerProfile.create([{ user: user._id, customerCode, ...(referredBy ? { referredBy } : {}) }], opts);
     // Membership record is created INACTIVE; it becomes ACTIVE on first verified payment.
     await Membership.create([{ customer: user._id, status: "INACTIVE" }], opts);
     return { id: String(user._id), role: user.role as Role, name: user.name, email: user.email, tokenVersion: user.tokenVersion ?? 0 };

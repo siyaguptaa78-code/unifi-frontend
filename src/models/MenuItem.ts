@@ -18,6 +18,8 @@ const menuItemSchema = new Schema(
     cafe: { type: Schema.Types.ObjectId, ref: "Cafe" },
     approvalStatus: { type: String, enum: ["APPROVED", "PENDING", "REJECTED"], default: "APPROVED" },
     reviewNote: String,
+    // AUTO = ranked by order volume; PINNED = always shown as Trendy; HIDDEN = never shown as Trendy.
+    trendingMode: { type: String, enum: ["AUTO", "PINNED", "HIDDEN"], default: "AUTO" },
     createdBy: { type: Schema.Types.ObjectId, ref: "User" },
     reviewedBy: { type: Schema.Types.ObjectId, ref: "User" },
   },

@@ -219,6 +219,9 @@ export function OrderManagementView({ cafeId, allowRefund = false }: OrderManage
                       {/* Order Number & Type */}
                       <TableCell className="font-mono text-xs">
                         <div className="font-bold text-stone-200">{ord.orderNumber}</div>
+                        <a href={`/invoice/order/${ord._id}`} className="text-[10px] font-sans font-semibold text-amber-400 hover:underline">
+                          Invoice{ord.channel === "COUNTER" ? " · counter bill" : ""}
+                        </a>
                         <div className="mt-1 flex items-center gap-1.5">
                           {isPreOrder ? (
                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-purple-950/40 border border-purple-500/30 text-purple-300">

@@ -3,9 +3,12 @@ import { cafeSchema } from "@/lib/validators";
 import { Cafe } from "@/models";
 import { Errors } from "@/lib/errors";
 import { logAudit } from "@/services/audit.service";
+import { assertCafeAccess } from "@/services/scope.service";
+import { CAFE_SCOPED_ROLES } from "@/lib/rbac";
 
-export const GET = route(async ({ params }) => {
+export const GET = route(async ({ params, user }) => {
   assertObjectId(params.id, "Cafe");
+  if (CAFE_SCOPED_ROLES.includes(user.role)) await assertCafeAccess(user, params.id);
   const cafe = await Cafe.findById(params.id)
     .populate("franchise", "name code")
     .populate("supervisor", "name email mobile")

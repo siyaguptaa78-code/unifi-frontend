@@ -20,6 +20,8 @@ const orderSchema = new Schema(
     pickupSlot: { type: String, maxlength: 50 },
     estimatedPrepMinutes: { type: Number, default: 15 },
     idempotencyKey: { type: String, required: true },
+    channel: { type: String, enum: ["APP", "COUNTER"], default: "APP" },
+    placedBy: { type: Schema.Types.ObjectId, ref: "User" },
     statusHistory: {
       type: [
         {

@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Spinner } from "@/components/ui/spinner";
 import { CreditCard, Receipt, Coins, CheckCircle2 } from "lucide-react";
 import { formatINR, formatDateTime, formatPoints } from "@/lib/utils";
+import Link from "next/link";
 
 export default function CustomerTransactionsPage() {
   const [data, setData] = useState<any>(null);
@@ -84,6 +85,7 @@ export default function CustomerTransactionsPage() {
                       <TableHead>Gateway / Mode</TableHead>
                       <TableHead className="text-right">Amount (₹)</TableHead>
                       <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Invoice</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -121,6 +123,15 @@ export default function CustomerTransactionsPage() {
                           >
                             {p.status}
                           </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {p.status === "SUCCESS" || p.status === "REFUNDED" ? (
+                            <Link href={`/invoice/payment/${p._id}`} className="text-xs font-semibold text-amber-400 hover:underline">
+                              Download
+                            </Link>
+                          ) : (
+                            <span className="text-xs text-stone-600">—</span>
+                          )}
                         </TableCell>
                       </TableRow>
                     ))}

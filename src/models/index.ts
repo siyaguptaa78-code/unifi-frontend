@@ -19,3 +19,6 @@ export * from "./Notification";
 export * from "./AuditLog";
 export * from "./SystemSetting";
 
+export * from "./VisitOtp";
+export * from "./Book";
+export * from "./BookSale";

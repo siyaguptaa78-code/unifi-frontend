@@ -53,7 +53,29 @@ export const DEFAULT_SETTINGS = {
     value: false,
     description: "Emergency platform maintenance flag",
   },
+  "membership.plans": {
+    value: [
+      { amount: 500, points: 500, hours: 0 },
+      { amount: 3000, points: 3000, hours: 150 },
+      { amount: 5000, points: 5000, hours: 150 },
+    ] as readonly RechargePlan[],
+    description:
+      'Recharge plans offered to customers. JSON list of {"amount":₹,"points":n,"hours":n}. Plans with hours > 0 reset the hours balance; plans with 0 hours only add points.',
+  },
+  "referral.enabled": { value: false, description: "Refer & Earn programme on/off (Super Admin only)" },
+  "referral.referrerPoints": { value: 250, description: "Points credited to the referrer when the referred friend completes their first recharge" },
+  "referral.refereePoints": { value: 250, description: "Points credited to the new customer on their first recharge when they joined with a referral code" },
+  "visits.otpRequired": { value: true, description: "Require a one-time password (sent to the customer) to confirm every cafe entry and exit" },
+  "books.returnDeductions": {
+    value: [20, 40, 60, 80] as readonly number[],
+    description:
+      "Book buy-back policy: % of the price kept when a book is returned within month 1, 2, 3, 4… After the last month the book cannot be returned (it is the customer's / donated).",
+  },
+  "trending.limit": { value: 6, description: "Number of Trendy Food items to highlight (most ordered in the last 30 days, plus manually pinned items)" },
+  "trending.windowDays": { value: 30, description: "Look-back window in days used to rank Trendy Food by order volume" },
 } as const;
+
+export type RechargePlan = { amount: number; points: number; hours: number };
 
 export type SettingKey = keyof typeof DEFAULT_SETTINGS;
 

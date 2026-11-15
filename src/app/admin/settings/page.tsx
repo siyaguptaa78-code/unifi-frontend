@@ -34,6 +34,24 @@ export default function AdminSettingsPage() {
   const [broadcastMessage, setBroadcastMessage] = useState("");
   const [broadcastType, setBroadcastType] = useState<"SYSTEM" | "OFFER" | "ALERT">("SYSTEM");
   const [broadcasting, setBroadcasting] = useState(false);
+  // Area-wise targeting
+  const [targetScope, setTargetScope] = useState<"ALL" | "AREA" | "CAFES">("ALL");
+  const [targetAreas, setTargetAreas] = useState<string[]>([]);
+  const [targetCafes, setTargetCafes] = useState<string[]>([]);
+  const [allCafes, setAllCafes] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("/api/cafes")
+      .then((r) => r.json())
+      .then((j) => setAllCafes(j.data || []))
+      .catch(() => setAllCafes([]));
+  }, []);
+
+  // Cities plus neighbourhoods (areas) taken from the cafe addresses.
+  const areaOptions = Array.from(
+    new Set(allCafes.flatMap((c: any) => [c.address?.city, c.address?.area]).filter(Boolean) as string[])
+  ).sort();
+  const toggle = (list: string[], v: string) => (list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
 
   const loadSettings = async () => {
     try {
@@ -97,6 +115,7 @@ export default function AdminSettingsPage() {
           title: broadcastTitle,
           message: broadcastMessage,
           type: broadcastType,
+          target: { scope: targetScope, areas: targetAreas, cafeIds: targetCafes },
         }),
       });
       const json = await res.json();
@@ -113,9 +132,11 @@ export default function AdminSettingsPage() {
   };
 
   const financialKeys = [
+    "membership.plans",
     "membership.price",
     "membership.points",
     "membership.hours",
+    "books.returnDeductions",
     "alerts.lowPointsThreshold",
     "alerts.lowHoursThreshold",
   ];
@@ -126,6 +147,9 @@ export default function AdminSettingsPage() {
     "orders.customerCancelStatuses",
     "orders.refundPolicy",
     "visits.duplicateTapSeconds",
+    "visits.otpRequired",
+    "trending.limit",
+    "trending.windowDays",
   ];
 
   const websiteKeys = [
@@ -278,10 +302,10 @@ export default function AdminSettingsPage() {
                 <div>
                   <h3 className="text-sm font-bold text-white flex items-center gap-2">
                     <Bell className="h-4 w-4 text-amber-500" />
-                    Dispatch Broadcast to All Active Members
+                    Dispatch Broadcast to Members
                   </h3>
                   <p className="text-xs text-stone-400 mt-1">
-                    Send an instantaneous in-app notification to all registered customers across the platform.
+                    Send an in-app notification to all customers, or only to customers of cafes in selected areas or specific cafes.
                   </p>
                 </div>
 
@@ -295,6 +319,57 @@ export default function AdminSettingsPage() {
                       required
                       className="mt-1 text-xs"
                     />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-stone-300">Send To</label>
+                    <div className="mt-1 grid grid-cols-3 gap-2">
+                      {([
+                        ["ALL", "All cafes"],
+                        ["AREA", "Area-wise"],
+                        ["CAFES", "Selected cafes"],
+                      ] as const).map(([v, label]) => (
+                        <button
+                          key={v}
+                          type="button"
+                          onClick={() => setTargetScope(v)}
+                          className={`py-2 text-xs font-semibold rounded-lg border cursor-pointer ${
+                            targetScope === v ? "bg-amber-600 text-stone-950 border-amber-500" : "bg-stone-950 text-stone-400 border-stone-800 hover:text-white"
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                    {targetScope === "AREA" && (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {areaOptions.map((a) => (
+                          <button
+                            key={a}
+                            type="button"
+                            onClick={() => setTargetAreas((l) => toggle(l, a))}
+                            className={`px-2.5 py-1 rounded-full text-[11px] border cursor-pointer ${
+                              targetAreas.includes(a) ? "border-amber-500 bg-amber-500/15 text-amber-300" : "border-stone-700 text-stone-400"
+                            }`}
+                          >
+                            {a}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {targetScope === "CAFES" && (
+                      <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                        {allCafes.map((c: any) => (
+                          <label key={c._id} className="flex items-center gap-2 text-xs text-stone-300">
+                            <input type="checkbox" checked={targetCafes.includes(c._id)} onChange={() => setTargetCafes((l) => toggle(l, c._id))} />
+                            {c.name} <span className="text-stone-500">({c.address?.area || c.address?.city})</span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                    <p className="mt-1 text-[11px] text-stone-500">
+                      Area / cafe broadcasts reach customers whose preferred cafe is there or who have visited or ordered there.
+                    </p>
                   </div>
 
                   <div>
@@ -324,7 +399,7 @@ export default function AdminSettingsPage() {
 
                   <Button type="submit" size="sm" isLoading={broadcasting} className="text-xs h-9">
                     <Send className="h-3.5 w-3.5 mr-1.5" />
-                    Deliver Broadcast to All Members
+                    {targetScope === "ALL" ? "Deliver Broadcast to All Members" : "Deliver Area-wise Broadcast"}
                   </Button>
                 </form>
               </div>

@@ -7,7 +7,7 @@ import { withTransaction } from "@/lib/db";
 import { makeReference, randomHex } from "@/lib/ids";
 import { razorpayConfigured, razorpayCreateOrder, razorpayRefund, verifyCheckoutSignature } from "@/lib/payments/razorpay";
 import { applyMembershipRecharge } from "@/services/membership.service";
-import { getMembershipConfig } from "@/services/settings.service";
+import { getMembershipConfig, getRechargePlans } from "@/services/settings.service";
 import { notify } from "@/services/notification.service";
 import { debitPoints } from "@/services/wallet.service";
 import { logAudit } from "@/services/audit.service";
@@ -19,9 +19,18 @@ export function paymentMode(): "RAZORPAY" | "DEMO" {
   return razorpayConfigured() ? "RAZORPAY" : "DEMO";
 }
 
-/** Step 1: create a payment order on the backend. Amount always comes from server settings. */
-export async function createMembershipPaymentOrder(user: AuthUser) {
-  const cfg = await getMembershipConfig();
+/** Resolves the recharge plan for a requested amount; defaults to the largest plan. */
+export async function resolveRechargePlan(amount?: number) {
+  const plans = await getRechargePlans();
+  if (amount === undefined || amount === null) return plans[plans.length - 1];
+  const plan = plans.find((p) => p.amount === Number(amount));
+  if (!plan) throw Errors.badRequest("Selected recharge plan is not available");
+  return plan;
+}
+
+/** Step 1: create a payment order on the backend. Amount and benefits always come from server settings. */
+export async function createMembershipPaymentOrder(user: AuthUser, planAmount?: number) {
+  const cfg = await resolveRechargePlan(planAmount);
   const membership = await Membership.findOne({ customer: user.id }).lean();
   if (!membership) throw Errors.notFound("Membership");
   const purpose = (membership.rechargeCount ?? 0) === 0 ? "MEMBERSHIP_PURCHASE" : "MEMBERSHIP_RECHARGE";
@@ -30,7 +39,7 @@ export async function createMembershipPaymentOrder(user: AuthUser) {
 
   let providerOrderId: string;
   if (provider === "RAZORPAY") {
-    const order = await razorpayCreateOrder(cfg.price, receipt, { customerId: user.id, purpose });
+    const order = await razorpayCreateOrder(cfg.amount, receipt, { customerId: user.id, purpose });
     providerOrderId = order.id;
   } else {
     providerOrderId = `demo_order_${randomHex(8).toLowerCase()}`;
@@ -39,7 +48,9 @@ export async function createMembershipPaymentOrder(user: AuthUser) {
   const payment = await Payment.create({
     customer: user.id,
     purpose,
-    amount: cfg.price,
+    amount: cfg.amount,
+    pointsGranted: cfg.points,
+    hoursGranted: cfg.hours,
     provider,
     providerOrderId,
     receipt,
@@ -54,8 +65,8 @@ export async function createMembershipPaymentOrder(user: AuthUser) {
     isDemo: provider === "DEMO",
     keyId: provider === "RAZORPAY" ? process.env.RAZORPAY_KEY_ID : undefined,
     orderId: providerOrderId,
-    amount: cfg.price,
-    amountPaise: cfg.price * 100,
+    amount: cfg.amount,
+    amountPaise: cfg.amount * 100,
     currency: "INR",
     receipt,
     purpose,
@@ -161,7 +172,7 @@ export async function refundMembershipPayment(admin: AuthUser, paymentId: string
     if (!updated) throw Errors.conflict("Payment was already refunded");
     await debitPoints({
       customerId: payment.customer,
-      points: cfg.points,
+      points: payment.pointsGranted ?? cfg.points,
       source: "ADMIN",
       reference: `REFUND-${payment.receipt}`,
       description: `Reversal of points for refunded payment ${payment.receipt}`,

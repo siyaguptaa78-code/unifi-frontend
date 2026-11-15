@@ -31,6 +31,7 @@ export const registerSchema = z
     email: emailSchema,
     password: passwordSchema,
     confirmPassword: z.string(),
+    referralCode: z.string().trim().max(20).optional().or(z.literal("")),
   })
   .refine((d) => d.password === d.confirmPassword, { message: "Passwords do not match", path: ["confirmPassword"] });
 
@@ -186,6 +187,8 @@ export const scanSchema = z.object({
   cafeId: objectId,
   mode: z.enum(["AUTO", "ENTRY", "EXIT"]).default("AUTO"),
   deviceId: z.string().trim().max(64).default("SIMULATOR"),
+  otpRequestId: objectId.optional(),
+  otp: z.string().trim().regex(/^\d{6}$/, "Enter the 6-digit code").optional(),
 });
 
 export const dateRangeQuery = z.object({
@@ -245,6 +248,14 @@ export const adminBroadcastNotificationSchema = z.object({
   message: z.string().trim().min(5).max(1000),
   type: z.enum(["SYSTEM", "OFFER", "ALERT", "CAFE_UPDATE"]).default("SYSTEM"),
   link: z.string().trim().optional(),
+  // Area-wise targeting: everyone, customers of cafes in some cities/areas, or of specific cafes.
+  target: z
+    .object({
+      scope: z.enum(["ALL", "AREA", "CAFES"]).default("ALL"),
+      areas: z.array(z.string().trim().min(1).max(100)).max(50).default([]),
+      cafeIds: z.array(objectId).max(100).default([]),
+    })
+    .default({ scope: "ALL", areas: [], cafeIds: [] }),
 });
 
 

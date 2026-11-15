@@ -27,6 +27,7 @@ import {
 import { formatPoints, formatDateTime } from "@/lib/utils";
 import { toast } from "sonner";
 import { useAuth } from "@/components/providers";
+import Link from "next/link";
 
 export default function CustomerOrdersPage() {
   const { refreshUser } = useAuth();
@@ -318,6 +319,11 @@ export default function CustomerOrdersPage() {
                               >
                                 <Eye className="h-3.5 w-3.5" />
                               </Button>
+                              <Link href={`/invoice/order/${ord._id}`}>
+                                <Button size="sm" variant="outline" className="h-7 px-2.5 text-[11px]" title="View / download invoice">
+                                  Invoice
+                                </Button>
+                              </Link>
                             </div>
                           </TableCell>
                         </TableRow>
@@ -392,7 +398,12 @@ export default function CustomerOrdersPage() {
             </div>
           )}
 
-          <DialogFooter>
+          <DialogFooter className="gap-2">
+            {selectedOrder && (
+              <Link href={`/invoice/order/${selectedOrder._id}`}>
+                <Button className="text-xs w-full">Download Invoice</Button>
+              </Link>
+            )}
             <Button variant="outline" onClick={() => setDetailModalOpen(false)} className="text-xs">
               Close
             </Button>

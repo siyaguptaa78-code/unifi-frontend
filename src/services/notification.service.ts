@@ -30,7 +30,7 @@ export function getProvider(channel: "EMAIL" | "SMS" | "WHATSAPP"): DeliveryProv
   }
 }
 
-const EXTERNAL_CHANNEL_TYPES: NotificationType[] = ["PAYMENT_CONFIRMATION", "REFUND_PROCESSED", "HOURS_EXHAUSTED", "ORDER_READY"];
+const EXTERNAL_CHANNEL_TYPES: NotificationType[] = ["PAYMENT_CONFIRMATION", "REFUND_PROCESSED", "HOURS_EXHAUSTED", "ORDER_READY", "VISIT_OTP"];
 
 /**
  * Create an in-app notification. For important types also dispatch to external channels

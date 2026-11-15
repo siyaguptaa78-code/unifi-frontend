@@ -39,7 +39,11 @@ const STATUS_NOTIFY: Partial<Record<OrderStatus, { type: NotificationType; title
  * prices are never trusted). Duplicate submissions with the same idempotency key return the
  * original order instead of debiting twice.
  */
-export async function placeOrder(user: AuthUser, input: z.infer<typeof placeOrderSchema>) {
+export async function placeOrder(
+  user: AuthUser,
+  input: z.infer<typeof placeOrderSchema>,
+  opts: { channel?: "APP" | "COUNTER"; placedBy?: string } = {}
+) {
   const existing = await Order.findOne({ customer: user.id, idempotencyKey: input.idempotencyKey }).lean();
   if (existing) return { order: existing, duplicate: true };
 
@@ -96,12 +100,16 @@ export async function placeOrder(user: AuthUser, input: z.infer<typeof placeOrde
             pickupSlot: input.pickupSlot,
             estimatedPrepMinutes: cafe.estimatedPrepMinutes ?? 15,
             idempotencyKey: input.idempotencyKey,
+            channel: opts.channel ?? "APP",
+            placedBy: opts.placedBy ?? user.id,
             statusHistory: [
               {
                 status: "PENDING",
-                by: user.id,
+                by: opts.placedBy ?? user.id,
                 at: new Date(),
-                note: normalizedOrderType === "PRE_ORDER"
+                note: opts.channel === "COUNTER"
+                  ? "Counter bill — paid with membership card"
+                  : normalizedOrderType === "PRE_ORDER"
                   ? `Online Pre-Order for cafe collection (Slot: ${input.pickupSlot || "ASAP"})`
                   : "Dine-In order placed at cafe",
               },
@@ -121,7 +129,7 @@ export async function placeOrder(user: AuthUser, input: z.infer<typeof placeOrde
           reference: orderNumber,
           description: `Order ${orderNumber} at ${cafe.name}`,
           cafe: cafe._id,
-          performedBy: user.id,
+          performedBy: opts.placedBy ?? user.id,
           session,
         });
       } catch (e) {
@@ -274,3 +282,38 @@ export async function getOrderDetail(orderId: string) {
   return { ...order, items };
 }
 
+
+/**
+ * Counter billing: staff taps/enters the customer's card UID and bills the order to that
+ * customer's points wallet. The customer sees it in "My Orders" and can download the invoice.
+ */
+export async function placeCounterOrder(
+  actor: AuthUser,
+  input: { uid: string; cafeId: string; items: { menuItemId: string; quantity: number }[]; notes?: string; idempotencyKey: string }
+) {
+  await assertCafeAccess(actor, input.cafeId);
+  const { MembershipCard } = await import("@/models/MembershipCard");
+  const { User } = await import("@/models/User");
+  const { normalizeUid } = await import("@/services/card.service");
+  const card = await MembershipCard.findOne({ uid: normalizeUid(input.uid) }).lean();
+  if (!card) throw Errors.business("CARD_NOT_FOUND", "Card not recognised.");
+  if (card.status !== "ACTIVE") throw Errors.business("CARD_NOT_ACTIVE", `Card is ${card.status.toLowerCase()}.`);
+  const customer = await User.findById(card.customer).lean();
+  if (!customer || customer.status !== "ACTIVE") throw Errors.business("CUSTOMER_INACTIVE", "Customer account is not active.");
+  const customerAuth: AuthUser = {
+    id: String(customer._id),
+    role: "CUSTOMER",
+    name: customer.name,
+    email: customer.email,
+    mobile: customer.mobile,
+  };
+  const result = await placeOrder(
+    customerAuth,
+    { cafeId: input.cafeId, orderType: "DINE_IN", notes: input.notes, idempotencyKey: input.idempotencyKey, items: input.items },
+    { channel: "COUNTER", placedBy: actor.id }
+  );
+  if (!result.duplicate) {
+    await logAudit(actor, "COUNTER_ORDER_PLACED", "Order", result.order._id, { uid: card.uid, total: result.order.totalPoints }, { cafe: input.cafeId });
+  }
+  return { ...result, customer: { name: customer.name, mobile: customer.mobile } };
+}

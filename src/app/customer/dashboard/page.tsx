@@ -92,7 +92,7 @@ export default function CustomerDashboardPage() {
               <Link href="/customer/membership">
                 <Button className="font-semibold gap-1.5 shadow-md">
                   <Coins className="h-4 w-4" />
-                  <span>Recharge ₹5,000</span>
+                  <span>Recharge</span>
                 </Button>
               </Link>
               <Link href="/customer/menu">

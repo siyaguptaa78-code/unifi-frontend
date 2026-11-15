@@ -1,5 +1,5 @@
 import { SystemSetting } from "@/models/SystemSetting";
-import { DEFAULT_SETTINGS, type SettingKey } from "@/lib/constants";
+import { DEFAULT_SETTINGS, type SettingKey, type RechargePlan } from "@/lib/constants";
 
 type SettingValue<K extends SettingKey> = (typeof DEFAULT_SETTINGS)[K]["value"] extends number
   ? number
@@ -70,3 +70,29 @@ export async function getMembershipConfig() {
   return { price: Number(price), points: Number(points), hours: Number(hours), minutes: Number(hours) * 60 };
 }
 
+
+export async function getBooleanSetting(key: SettingKey): Promise<boolean> {
+  const v = await getSetting(key);
+  return v === true || v === "true";
+}
+
+/**
+ * Recharge plans, sanitised and sorted by amount. Falls back to the defaults when the stored
+ * value is malformed so a bad admin edit can never break checkout.
+ */
+export async function getRechargePlans(): Promise<RechargePlan[]> {
+  const raw = await getSetting("membership.plans");
+  const list = Array.isArray(raw) ? raw : [];
+  const plans = list
+    .map((p: any) => ({ amount: Math.round(Number(p?.amount)), points: Math.round(Number(p?.points)), hours: Math.round(Number(p?.hours ?? 0)) }))
+    .filter((p) => p.amount > 0 && p.points > 0 && p.hours >= 0);
+  const valid = plans.length ? plans : (DEFAULT_SETTINGS["membership.plans"].value as readonly RechargePlan[]).map((p) => ({ ...p }));
+  return valid.sort((a, b) => a.amount - b.amount);
+}
+
+/** % of the price kept on return, per elapsed month (index 0 = within month 1). */
+export async function getBookReturnDeductions(): Promise<number[]> {
+  const raw = await getSetting("books.returnDeductions");
+  const list = (Array.isArray(raw) ? raw : []).map(Number).filter((n) => Number.isFinite(n) && n >= 0 && n <= 100);
+  return list.length ? list : [...DEFAULT_SETTINGS["books.returnDeductions"].value];
+}
