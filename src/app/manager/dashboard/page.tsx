@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { PortalLayout } from "@/components/layout/portal-layout";
-import { PageHeader } from "@/components/layout/page-header";
+import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { StatCard } from "@/components/ui/stat-card";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -46,8 +46,8 @@ export default function ManagerDashboardPage() {
 
   return (
     <PortalLayout allowedRoles={["MANAGER", "SUPER_ADMIN"]}>
-      <PageHeader
-        title={`Store Operations — Welcome, ${user?.name}`}
+      <DashboardHeader
+        title="Store Operations"
         description="Assigned cafe operational performance, live kitchen queue, menu availability and card access."
         badge="Manager Console"
       />

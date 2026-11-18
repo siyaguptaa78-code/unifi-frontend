@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { PortalLayout } from "@/components/layout/portal-layout";
-import { PageHeader } from "@/components/layout/page-header";
+import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { StatCard } from "@/components/ui/stat-card";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -38,8 +38,8 @@ export default function SupervisorDashboardPage() {
 
   return (
     <PortalLayout allowedRoles={["SUPERVISOR", "SUPER_ADMIN"]}>
-      <PageHeader
-        title={`Supervisor Console — Welcome, ${user?.name}`}
+      <DashboardHeader
+        title="Regional Supervisor Console"
         description="Regional operational performance, assigned store monitoring, order throughput and staff oversight."
         badge="Area Supervisor"
       />

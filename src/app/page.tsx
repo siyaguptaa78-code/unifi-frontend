@@ -25,6 +25,33 @@ import {
   ChevronRight,
 } from "lucide-react";
 
+const FAQS = [
+  {
+    q: "How do recharge plans work?",
+    a: "Every rupee you recharge becomes points (1 point = ₹1) that you spend on food and drinks at any branch. Points never expire and carry forward. Plans from ₹3,000 also include 150 hours of cafe workspace access.",
+  },
+  {
+    q: "How are my cafe hours counted?",
+    a: "Your timer starts when you check in at a branch and stops when you check out. Only the time you actually spend inside is deducted from your hours balance.",
+  },
+  {
+    q: "How do I check in and out?",
+    a: "Tap your membership card at the counter. For your security, a one-time code appears in your Unifi Cafe app — share it with the staff to confirm your entry or exit.",
+  },
+  {
+    q: "Can I order before I reach the cafe?",
+    a: "Yes. Choose your branch, pick an arrival slot and pay with points. Your order is prepared fresh for pickup or dine-in. We do not offer home delivery.",
+  },
+  {
+    q: "Can I buy and return books?",
+    a: "Many branches have a book shelf. Buy with points and return within four months for a partial refund — the longer you keep it, the less is refunded. After that, the book is yours.",
+  },
+  {
+    q: "Do I get an invoice?",
+    a: "Yes. Every recharge, food order and book purchase has a downloadable invoice in your account.",
+  },
+];
+
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-stone-950 flex flex-col text-white selection:bg-amber-500 selection:text-stone-950">
@@ -34,6 +61,10 @@ export default function HomePage() {
         {/* Hero Section */}
         <section className="relative overflow-hidden py-24 sm:py-32 border-b border-stone-800/80">
           <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[450px] bg-gradient-to-tr from-amber-600/15 via-amber-500/10 to-transparent blur-[140px] rounded-full pointer-events-none" />
+          <div
+            className="absolute inset-0 pointer-events-none opacity-[0.07] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]"
+            style={{ backgroundImage: "radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)", backgroundSize: "26px 26px" }}
+          />
 
           <div className="container mx-auto max-w-7xl px-4 sm:px-6 relative z-10 text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/30 bg-amber-950/20 text-amber-300 text-xs font-semibold mb-6">
@@ -50,13 +81,14 @@ export default function HomePage() {
 
             <p className="mt-6 text-base sm:text-lg text-stone-300 max-w-2xl mx-auto leading-relaxed">
               Unifi Cafe reimagines the third space for modern professionals and creators.
-              Recharge ₹5,000 to unlock 5,000 points for dining, 150 hours of high-speed cafe access, contactless NFC entry, and online pre-ordering before arrival.
+              Recharge to get points for dining (1 point = ₹1). Plans from ₹3,000 also include 150 hours of high-speed cafe access,
+              with contactless NFC entry and online pre-ordering before you arrive.
             </p>
 
             <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3.5">
               <Link href="/register">
                 <Button size="lg" className="w-full sm:w-auto font-bold px-8 gap-2 shadow-xl shadow-amber-600/25 bg-amber-500 hover:bg-amber-400 text-stone-950">
-                  <span>Join Unifi Cafe for ₹5,000</span>
+                  <span>Become a Member</span>
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
@@ -73,9 +105,16 @@ export default function HomePage() {
               </Link>
             </div>
 
+            {/* Quick facts */}
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-stone-400">
+              <span className="inline-flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-amber-500" /> 5 branches across 4 metros</span>
+              <span className="inline-flex items-center gap-1.5"><Wifi className="h-3.5 w-3.5 text-amber-500" /> High-speed Wi-Fi at every seat</span>
+              <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-amber-500" /> OTP-secured card entry</span>
+            </div>
+
             {/* Core Value Proposition Cards */}
             <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto text-left">
-              <div className="rounded-2xl border border-stone-800 bg-stone-900/60 p-5 backdrop-blur-sm">
+              <div className="rounded-2xl border border-stone-800 bg-stone-900/60 p-5 backdrop-blur-sm transition-all duration-200 hover:-translate-y-1 hover:border-amber-500/40 hover:shadow-xl hover:shadow-amber-900/10">
                 <div className="h-9 w-9 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mb-3">
                   <Coins className="h-5 w-5" />
                 </div>
@@ -84,16 +123,16 @@ export default function HomePage() {
                 <div className="text-[11px] text-stone-400 mt-0.5">1 Point = ₹1 INR. 100% money converted, points carry forward.</div>
               </div>
 
-              <div className="rounded-2xl border border-stone-800 bg-stone-900/60 p-5 backdrop-blur-sm">
+              <div className="rounded-2xl border border-stone-800 bg-stone-900/60 p-5 backdrop-blur-sm transition-all duration-200 hover:-translate-y-1 hover:border-amber-500/40 hover:shadow-xl hover:shadow-amber-900/10">
                 <div className="h-9 w-9 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mb-3">
                   <Clock className="h-5 w-5" />
                 </div>
                 <div className="text-2xl font-extrabold text-white">150 Hours</div>
                 <div className="text-xs font-semibold text-white mt-1">Workspace Allocation</div>
-                <div className="text-[11px] text-stone-400 mt-0.5">Resets to full 150h on every recharge. High-speed WiFi included.</div>
+                <div className="text-[11px] text-stone-400 mt-0.5">Included with ₹3,000+ plans and reset on every such recharge. High-speed WiFi included.</div>
               </div>
 
-              <div className="rounded-2xl border border-stone-800 bg-stone-900/60 p-5 backdrop-blur-sm">
+              <div className="rounded-2xl border border-stone-800 bg-stone-900/60 p-5 backdrop-blur-sm transition-all duration-200 hover:-translate-y-1 hover:border-amber-500/40 hover:shadow-xl hover:shadow-amber-900/10">
                 <div className="h-9 w-9 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mb-3">
                   <Car className="h-5 w-5" />
                 </div>
@@ -102,7 +141,7 @@ export default function HomePage() {
                 <div className="text-[11px] text-stone-400 mt-0.5">Pick up freshly prepared food or dine in. No home delivery.</div>
               </div>
 
-              <div className="rounded-2xl border border-stone-800 bg-stone-900/60 p-5 backdrop-blur-sm">
+              <div className="rounded-2xl border border-stone-800 bg-stone-900/60 p-5 backdrop-blur-sm transition-all duration-200 hover:-translate-y-1 hover:border-amber-500/40 hover:shadow-xl hover:shadow-amber-900/10">
                 <div className="h-9 w-9 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mb-3">
                   <CreditCard className="h-5 w-5" />
                 </div>
@@ -411,6 +450,28 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="py-20 border-b border-stone-800/80 bg-stone-950">
+          <div className="container mx-auto max-w-3xl px-4 sm:px-6">
+            <div className="text-center mb-10">
+              <Badge variant="default" className="mb-3">Questions</Badge>
+              <h2 className="text-3xl font-bold tracking-tight text-white">Frequently Asked Questions</h2>
+              <p className="text-sm text-stone-400 mt-2">Everything you need to know before your first visit.</p>
+            </div>
+            <div className="space-y-3">
+              {FAQS.map((f) => (
+                <details key={f.q} className="group rounded-2xl border border-stone-800 bg-stone-900/50 px-5 py-4 open:border-amber-500/40 open:bg-stone-900">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-white [&::-webkit-details-marker]:hidden">
+                    {f.q}
+                    <ChevronRight className="h-4 w-4 shrink-0 text-amber-500 transition-transform group-open:rotate-90" />
+                  </summary>
+                  <p className="mt-3 text-sm leading-relaxed text-stone-400">{f.a}</p>
+                </details>
+              ))}
             </div>
           </div>
         </section>

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { PortalLayout } from "@/components/layout/portal-layout";
-import { PageHeader } from "@/components/layout/page-header";
+import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { StatCard } from "@/components/ui/stat-card";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,8 +33,8 @@ export default function StaffDashboardPage() {
 
   return (
     <PortalLayout allowedRoles={["STAFF", "MANAGER", "SUPER_ADMIN"]}>
-      <PageHeader
-        title={`Staff Counter — Welcome, ${user?.name}`}
+      <DashboardHeader
+        title="Counter Overview"
         description="Daily operational queue for contactless customer check-in and kitchen food orders."
         badge="Live Operations"
         action={

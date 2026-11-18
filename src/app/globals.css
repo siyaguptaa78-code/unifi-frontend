@@ -63,3 +63,19 @@ body {
     margin: 0 !important;
   }
 }
+
+/* Slim, theme-matched scrollbars for inner scroll areas (e.g. the portal sidebar). */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #3a3330 transparent;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #3a3330;
+  border-radius: 9999px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}

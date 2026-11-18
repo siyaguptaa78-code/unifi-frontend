@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { PortalLayout } from "@/components/layout/portal-layout";
-import { PageHeader } from "@/components/layout/page-header";
+import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { StatCard } from "@/components/ui/stat-card";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
@@ -37,8 +37,8 @@ export default function FranchiseDashboardPage() {
 
   return (
     <PortalLayout allowedRoles={["FRANCHISE_OWNER", "SUPER_ADMIN"]}>
-      <PageHeader
-        title={`Franchise Partner Console — ${user?.name}`}
+      <DashboardHeader
+        title="Franchise Partner Console"
         description="Monitor multi-unit franchise locations, food sales volume, and customer footfall."
         badge="Franchise Owner"
       />

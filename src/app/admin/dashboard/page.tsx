@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { PortalLayout } from "@/components/layout/portal-layout";
-import { PageHeader } from "@/components/layout/page-header";
+import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { StatCard } from "@/components/ui/stat-card";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -90,8 +90,8 @@ export default function AdminDashboardPage() {
 
   return (
     <PortalLayout allowedRoles={["SUPER_ADMIN"]}>
-      <PageHeader
-        title="Unifi Cafe Platform Command Center"
+      <DashboardHeader
+        title="Platform Command Center"
         description="Unified real-time oversight of customer subscriptions, cafe branches, kitchen queues, financial flows and personnel."
         badge="Super Admin Authority"
         action={
