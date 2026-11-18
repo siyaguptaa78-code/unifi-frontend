@@ -175,8 +175,8 @@ export function PortalSidebar() {
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-base font-black text-white tracking-tight">
-                Uni<span className="text-amber-500">Cafe</span>
+              <span className="text-base font-black text-white tracking-tight whitespace-nowrap">
+                Unifi <span className="text-amber-500">Cafe</span>
               </span>
               <span className="text-[9px] uppercase tracking-wider font-extrabold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">
                 PRO

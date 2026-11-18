@@ -1,13 +1,13 @@
-# UniCafe — REST API Documentation
+# Unifi Cafe — REST API Documentation
 
-UniCafe exposes a structured, RESTful HTTP API built using Next.js App Router Route Handlers. All endpoints accept and return JSON (with the exception of CSV report exports). Protected endpoints use HTTP-only session cookies containing signed JWT tokens.
+Unifi Cafe exposes a structured, RESTful HTTP API built using Next.js App Router Route Handlers. All endpoints accept and return JSON (with the exception of CSV report exports). Protected endpoints use HTTP-only session cookies containing signed JWT tokens.
 
 ---
 
 ## 🔒 Authentication & Security
 
 ### Authorization Header / Cookies
-- Client web sessions authenticate via an HTTP-only cookie named `unicafe_session`.
+- Client web sessions authenticate via an HTTP-only cookie named `uc_session`.
 - Machine clients or external POS adapters can supply an `Authorization: Bearer <jwt_token>` header.
 
 ### Central Role Hierarchy
@@ -88,7 +88,7 @@ Authenticate with email/mobile and password. Sets HTTP-only session cookie.
 - **Request Body:**
   ```json
   {
-    "identifier": "customer@unicafe.demo",
+    "identifier": "customer@unificafe.demo",
     "password": "Demo@123"
   }
   ```
@@ -100,7 +100,7 @@ Authenticate with email/mobile and password. Sets HTTP-only session cookie.
       "user": {
         "id": "6724...",
         "name": "Rohan Verma",
-        "email": "customer@unicafe.demo",
+        "email": "customer@unificafe.demo",
         "role": "CUSTOMER"
       },
       "portalUrl": "/customer/dashboard"
@@ -120,7 +120,7 @@ Retrieve currently logged-in user profile and permissions.
       "user": {
         "id": "6724...",
         "name": "Rohan Verma",
-        "email": "customer@unicafe.demo",
+        "email": "customer@unificafe.demo",
         "role": "CUSTOMER"
       }
     }
@@ -300,7 +300,7 @@ Process contactless smart card tap for entry or exit.
     "success": true,
     "data": {
       "action": "ENTRY",
-      "message": "Welcome to UniCafe Indiranagar!",
+      "message": "Welcome to Unifi Cafe Indiranagar!",
       "session": { "id": "6724...", "entryAt": "2026-11-01T10:00:00.000Z" },
       "customer": { "name": "Rohan Verma", "customerCode": "UC1001", "remainingHours": 142 }
     }

@@ -61,7 +61,7 @@ export async function requestVisitOtp(actor: AuthUser, input: ScanInput) {
     card.customer,
     "VISIT_OTP",
     `Your ${action === "ENTRY" ? "entry" : "exit"} code: ${code}`,
-    `Share code ${code} with the UniCafe staff at ${cafe.name} to confirm your ${action === "ENTRY" ? "check-in" : "check-out"}. Valid for 5 minutes. Never share it with anyone else.`,
+    `Share code ${code} with the Unifi Cafe staff at ${cafe.name} to confirm your ${action === "ENTRY" ? "check-in" : "check-out"}. Valid for 5 minutes. Never share it with anyone else.`,
     { link: "/customer/dashboard" }
   );
   const customer = await User.findById(card.customer).select("name mobile").lean();

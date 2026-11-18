@@ -91,7 +91,7 @@ export default function AdminDashboardPage() {
   return (
     <PortalLayout allowedRoles={["SUPER_ADMIN"]}>
       <PageHeader
-        title="UniCafe Platform Command Center"
+        title="Unifi Cafe Platform Command Center"
         description="Unified real-time oversight of customer subscriptions, cafe branches, kitchen queues, financial flows and personnel."
         badge="Super Admin Authority"
         action={
@@ -258,7 +258,7 @@ export default function AdminDashboardPage() {
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-sm font-bold text-white">Branch-Wise Order & Points Ranking</CardTitle>
-              <p className="text-xs text-stone-400">Top revenue generating UniCafe locations</p>
+              <p className="text-xs text-stone-400">Top revenue generating Unifi Cafe locations</p>
             </div>
             <Link href="/admin/cafes">
               <Button variant="ghost" size="sm" className="text-xs text-amber-400 hover:text-amber-300">

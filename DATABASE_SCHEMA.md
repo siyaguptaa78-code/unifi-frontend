@@ -1,6 +1,6 @@
-# UniCafe — Database Architecture & Schema Specification
+# Unifi Cafe — Database Architecture & Schema Specification
 
-This document details the MongoDB 7.0 database schema, collection definitions, indexing strategies, relationships, and data validation rules for the UniCafe platform.
+This document details the MongoDB 7.0 database schema, collection definitions, indexing strategies, relationships, and data validation rules for the Unifi Cafe platform.
 
 ---
 
@@ -34,7 +34,7 @@ erDiagram
 
 ## 📦 Collections Catalog
 
-The UniCafe database contains 18 collections:
+The Unifi Cafe database contains 18 collections:
 
 | Collection Name | Model Class | Primary Function |
 | :--- | :--- | :--- |

@@ -155,7 +155,7 @@ export default function ManagerStaffPage() {
 
           <form onSubmit={handleCreateStaff} className="space-y-3.5 py-2">
             <Input label="Full Name" placeholder="Rohan Sharma" value={name} onChange={(e) => setName(e.target.value)} required />
-            <Input label="Email Address" type="email" placeholder="rohan@unicafe.demo" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <Input label="Email Address" type="email" placeholder="rohan@unificafe.demo" value={email} onChange={(e) => setEmail(e.target.value)} required />
             <Input label="Mobile Number" type="tel" placeholder="9876543219" value={mobile} onChange={(e) => setMobile(e.target.value)} required />
             <Input label="Designation" value={designation} onChange={(e) => setDesignation(e.target.value)} required />
 

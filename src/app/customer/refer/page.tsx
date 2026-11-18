@@ -35,10 +35,10 @@ export default function ReferPage() {
   };
 
   const share = async () => {
-    const text = `Join me on UniCafe! Use my code ${data.code} and get ${data.refereePoints} bonus points on your first recharge.`;
+    const text = `Join me on Unifi Cafe! Use my code ${data.code} and get ${data.refereePoints} bonus points on your first recharge.`;
     if (navigator.share) {
       try {
-        await navigator.share({ title: "UniCafe", text, url: link });
+        await navigator.share({ title: "Unifi Cafe", text, url: link });
       } catch {
         // user cancelled
       }
@@ -68,7 +68,7 @@ export default function ReferPage() {
             <>
               <Card className="border-amber-500/40 bg-gradient-to-br from-stone-900 to-amber-950/30 p-6 space-y-4">
                 <p className="text-sm text-stone-200">
-                  Invite friends to UniCafe. When a friend joins with your code and completes their first recharge, you get{" "}
+                  Invite friends to Unifi Cafe. When a friend joins with your code and completes their first recharge, you get{" "}
                   <strong className="text-amber-400">{formatPoints(data.referrerPoints)}</strong> and they get{" "}
                   <strong className="text-amber-400">{formatPoints(data.refereePoints)}</strong>.
                 </p>

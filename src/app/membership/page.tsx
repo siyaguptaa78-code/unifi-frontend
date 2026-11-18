@@ -23,11 +23,11 @@ export default function MembershipPublicPage() {
     },
     {
       q: "Can I use points to order food and coffee?",
-      a: "Yes! Every single menu item across all UniCafe locations can be ordered with points. 1 point is exactly equal to ₹1.",
+      a: "Yes! Every single menu item across all Unifi Cafe locations can be ordered with points. 1 point is exactly equal to ₹1.",
     },
     {
       q: "Can I visit multiple locations in one day?",
-      a: "Yes, you can visit any registered UniCafe location across the country. You only need to tap out from one location before tapping in at another.",
+      a: "Yes, you can visit any registered Unifi Cafe location across the country. You only need to tap out from one location before tapping in at another.",
     },
   ];
 
@@ -54,7 +54,7 @@ export default function MembershipPublicPage() {
             <div className="rounded-3xl border-2 border-amber-500/60 bg-gradient-to-b from-stone-900 via-stone-900/90 to-stone-950 p-8 shadow-2xl relative overflow-hidden">
               <div className="flex justify-between items-center mb-6">
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-widest text-amber-500">UniCafe Access Pass</span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-amber-500">Unifi Cafe Access Pass</span>
                   <h3 className="text-2xl font-bold text-white mt-1">Universal Recharge</h3>
                 </div>
                 <Badge variant="success">BEST VALUE</Badge>

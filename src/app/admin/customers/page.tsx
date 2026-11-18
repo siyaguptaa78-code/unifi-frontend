@@ -420,7 +420,7 @@ export default function AdminCustomersPage() {
           <DialogHeader>
             <DialogTitle>Register Customer via Admin</DialogTitle>
             <DialogDescription>
-              Directly enroll a new member into the UniCafe platform with optional initial points and cafe hours.
+              Directly enroll a new member into the Unifi Cafe platform with optional initial points and cafe hours.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreateCustomer} className="space-y-4 pt-2">

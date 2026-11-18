@@ -261,7 +261,7 @@ export default function StaffScanCardPage() {
                 </div>
                 <p className="text-xs text-stone-300">
                   A 6-digit code was sent to the customer{otpRequest.customer?.mobileMasked ? ` (${otpRequest.customer.mobileMasked})` : ""} and is shown in
-                  their UniCafe app. Ask them for it. Valid for 5 minutes.
+                  their Unifi Cafe app. Ask them for it. Valid for 5 minutes.
                 </p>
                 <div className="flex gap-2">
                   <Input

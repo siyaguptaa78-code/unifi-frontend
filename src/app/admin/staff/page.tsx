@@ -430,7 +430,7 @@ export default function AdminStaffPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="vikram@unicafe.in"
+                  placeholder="vikram@unificafe.in"
                   required
                   className="mt-1 text-xs"
                 />

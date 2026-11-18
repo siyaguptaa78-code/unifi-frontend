@@ -1,4 +1,4 @@
-# UniCafe — Enterprise Multi-Location Cafe Membership & Franchise SaaS
+# Unifi Cafe — Enterprise Multi-Location Cafe Membership & Franchise SaaS
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.5.28-black?logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.1.1-61DAFB?logo=react)](https://react.dev/)
@@ -7,13 +7,13 @@
 [![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-4.x-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-Proprietary-red)](#)
 
-UniCafe is a production-grade, multi-tenant cafe membership, contactless smart card access, wallet ordering, and franchise operations platform built for physical cafe chains across India.
+Unifi Cafe is a production-grade, multi-tenant cafe membership, contactless smart card access, wallet ordering, and franchise operations platform built for physical cafe chains across India.
 
 ---
 
 ## 🌟 Executive Summary
 
-UniCafe eliminates checkout friction and enables seamless cross-cafe co-working and dining experiences. Members subscribe to an all-inclusive prepaid membership, receive a digital and physical NFC/RFID smart card, tap into any registered cafe branch, and order gourmet meals and beverages straight from their wallet points.
+Unifi Cafe eliminates checkout friction and enables seamless cross-cafe co-working and dining experiences. Members subscribe to an all-inclusive prepaid membership, receive a digital and physical NFC/RFID smart card, tap into any registered cafe branch, and order gourmet meals and beverages straight from their wallet points.
 
 ### Core Business Model
 
@@ -30,7 +30,7 @@ UniCafe eliminates checkout friction and enables seamless cross-cafe co-working 
 
 ## 🏗️ Architecture & Technology Stack
 
-UniCafe is structured as a unified Next.js App Router full-stack monolith designed with clean architectural layers:
+Unifi Cafe is structured as a unified Next.js App Router full-stack monolith designed with clean architectural layers:
 
 ```mermaid
 flowchart TD
@@ -62,12 +62,12 @@ All accounts are pre-seeded and ready to use immediately:
 
 | Role | Email | Password | Access Portal | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| **Super Admin** | `admin@unicafe.demo` | `Admin@123` | `/admin/dashboard` | Unrestricted global access, financial analytics, audit logs, system settings |
-| **Area Supervisor** | `supervisor@unicafe.demo` | `Demo@123` | `/supervisor/dashboard` | Scoped monitoring across Bangalore assigned cafes |
-| **Franchise Owner** | `owner@unicafe.demo` | `Demo@123` | `/franchise/dashboard` | Franchise cafe analytics, sales, staff roster, local menu requests |
-| **Cafe Manager** | `manager@unicafe.demo` | `Demo@123` | `/manager/dashboard` | Real-time shift management, order dispatch, menu toggle, attendance |
-| **Cafe Staff** | `staff@unicafe.demo` | `Demo@123` | `/staff/scan-card` | Interactive NFC/RFID terminal simulator, card issuance, order fulfillment |
-| **Customer** | `customer@unicafe.demo` | `Demo@123` | `/customer/dashboard` | Points balance, remaining hours, digital card, food ordering, visit history |
+| **Super Admin** | `admin@unificafe.demo` | `Admin@123` | `/admin/dashboard` | Unrestricted global access, financial analytics, audit logs, system settings |
+| **Area Supervisor** | `supervisor@unificafe.demo` | `Demo@123` | `/supervisor/dashboard` | Scoped monitoring across Bangalore assigned cafes |
+| **Franchise Owner** | `owner@unificafe.demo` | `Demo@123` | `/franchise/dashboard` | Franchise cafe analytics, sales, staff roster, local menu requests |
+| **Cafe Manager** | `manager@unificafe.demo` | `Demo@123` | `/manager/dashboard` | Real-time shift management, order dispatch, menu toggle, attendance |
+| **Cafe Staff** | `staff@unificafe.demo` | `Demo@123` | `/staff/scan-card` | Interactive NFC/RFID terminal simulator, card issuance, order fulfillment |
+| **Customer** | `customer@unificafe.demo` | `Demo@123` | `/customer/dashboard` | Points balance, remaining hours, digital card, food ordering, visit history |
 
 ---
 
@@ -82,8 +82,8 @@ All accounts are pre-seeded and ready to use immediately:
 ### 2. Installation
 
 ```bash
-git clone https://github.com/your-org/unicafe.git
-cd unicafe
+git clone https://github.com/your-org/unifi-cafe.git
+cd unifi-cafe
 npm install
 ```
 
@@ -97,7 +97,7 @@ cp .env.example .env.local
 
 ### 4. Start the Database & Seed Demo Data
 
-UniCafe includes an embedded, high-performance MongoDB Replica Set runner. If you do not have an external MongoDB server running, start the local database:
+Unifi Cafe includes an embedded, high-performance MongoDB Replica Set runner. If you do not have an external MongoDB server running, start the local database:
 
 ```bash
 # Terminal 1: Start persistent local replica set on port 27017
@@ -145,16 +145,16 @@ The test runner spins up an isolated, transient MongoDB memory replica set and v
 
 Detailed technical documentation is provided in the project repository:
 
-- 📖 [**Setup & Installation Guide**](file:///c:/Users/Anurag%20Mishra/Documents/Unicafe/SETUP.md): Step-by-step installation, MongoDB replica set setup, environment variables, production deployment.
-- 🔌 [**REST API Documentation**](file:///c:/Users/Anurag%20Mishra/Documents/Unicafe/API_DOCUMENTATION.md): All 35+ REST endpoints with HTTP methods, RBAC scopes, request payloads, and response schemas.
-- 🗄️ [**Database Architecture**](file:///c:/Users/Anurag%20Mishra/Documents/Unicafe/DATABASE_SCHEMA.md): Complete MongoDB collection schemas, indexes, validation rules, and relationship diagrams.
-- 👥 [**Demo Data & Workflows**](file:///c:/Users/Anurag%20Mishra/Documents/Unicafe/DEMO_DATA.md): Account credentials, seeded entities, cafe locations, and user tour guidelines.
-- ⚙️ [**Environment Variables**](file:///c:/Users/Anurag%20Mishra/Documents/Unicafe/ENVIRONMENT_VARIABLES.md): Detailed specification of configuration keys and production values.
-- 🛡️ [**Testing Guide**](file:///c:/Users/Anurag%20Mishra/Documents/Unicafe/TESTING.md): Test suite execution instructions and test case mapping.
+- 📖 [**Setup & Installation Guide**](./SETUP.md): Step-by-step installation, MongoDB replica set setup, environment variables, production deployment.
+- 🔌 [**REST API Documentation**](./API_DOCUMENTATION.md): All 35+ REST endpoints with HTTP methods, RBAC scopes, request payloads, and response schemas.
+- 🗄️ [**Database Architecture**](./DATABASE_SCHEMA.md): Complete MongoDB collection schemas, indexes, validation rules, and relationship diagrams.
+- 👥 [**Demo Data & Workflows**](./DEMO_DATA.md): Account credentials, seeded entities, cafe locations, and user tour guidelines.
+- ⚙️ [**Environment Variables**](./ENVIRONMENT_VARIABLES.md): Detailed specification of configuration keys and production values.
+- 🛡️ [**Testing Guide**](./TESTING.md): Test suite execution instructions and test case mapping.
 
 ---
 
 ## 📄 License
 
-Proprietary — Developed for UniCafe Multi-Location Cafe SaaS Platform.
+Proprietary — Developed for Unifi Cafe Multi-Location Cafe SaaS Platform.
 

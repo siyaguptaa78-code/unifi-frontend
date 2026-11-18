@@ -1,6 +1,6 @@
-# UniCafe — Demo Accounts & Seed Data Guide
+# Unifi Cafe — Demo Accounts & Seed Data Guide
 
-This document describes the pre-configured accounts, cafe locations, customer profiles, orders, and data workflows provided in the UniCafe demo dataset.
+This document describes the pre-configured accounts, cafe locations, customer profiles, orders, and data workflows provided in the Unifi Cafe demo dataset.
 
 ---
 
@@ -10,12 +10,12 @@ The database is pre-seeded with 6 role-based accounts:
 
 | Role | Name | Email | Password | Assigned Scope | Default Landing |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Super Admin** | Vikram Malhotra | `admin@unicafe.demo` | `Admin@123` | Entire Network | `/admin/dashboard` |
-| **Area Supervisor**| Rajesh Nair | `supervisor@unicafe.demo` | `Demo@123` | Bengaluru Region (3 Cafes) | `/supervisor/dashboard` |
-| **Franchise Owner**| Priya Sundaram | `owner@unicafe.demo` | `Demo@123` | Indiranagar & Koramangala | `/franchise/dashboard` |
-| **Cafe Manager** | Ananya Sharma | `manager@unicafe.demo` | `Demo@123` | Indiranagar Cafe | `/manager/dashboard` |
-| **Cafe Staff** | Rahul Verma | `staff@unicafe.demo` | `Demo@123` | Indiranagar Cafe | `/staff/scan-card` |
-| **Customer** | Rohan Verma | `customer@unicafe.demo` | `Demo@123` | Personal Wallet & Card | `/customer/dashboard` |
+| **Super Admin** | Vikram Malhotra | `admin@unificafe.demo` | `Admin@123` | Entire Network | `/admin/dashboard` |
+| **Area Supervisor**| Rajesh Nair | `supervisor@unificafe.demo` | `Demo@123` | Bengaluru Region (3 Cafes) | `/supervisor/dashboard` |
+| **Franchise Owner**| Priya Sundaram | `owner@unificafe.demo` | `Demo@123` | Indiranagar & Koramangala | `/franchise/dashboard` |
+| **Cafe Manager** | Ananya Sharma | `manager@unificafe.demo` | `Demo@123` | Indiranagar Cafe | `/manager/dashboard` |
+| **Cafe Staff** | Rahul Verma | `staff@unificafe.demo` | `Demo@123` | Indiranagar Cafe | `/staff/scan-card` |
+| **Customer** | Rohan Verma | `customer@unificafe.demo` | `Demo@123` | Personal Wallet & Card | `/customer/dashboard` |
 
 ---
 
@@ -25,17 +25,17 @@ Five cafes across India's premier tech hubs are ready for operations:
 
 | Cafe Name | Code | City | Address | Supervisor | Manager |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **UniCafe Indiranagar** | `UC-BLR-01` | Bengaluru | 100ft Road, HAL 2nd Stage | Rajesh Nair | Ananya Sharma |
-| **UniCafe Koramangala** | `UC-BLR-02` | Bengaluru | 80ft Road, 4th Block | Rajesh Nair | Seeded Manager |
-| **UniCafe Whitefield** | `UC-BLR-03` | Bengaluru | ITPL Main Rd, EPIP Zone | Rajesh Nair | Seeded Manager |
-| **UniCafe Bandra** | `UC-MUM-01` | Mumbai | Linking Road, Bandra West | Unassigned | Seeded Manager |
-| **UniCafe CyberCity** | `UC-DEL-01` | Gurugram | DLF Phase 2, CyberCity | Unassigned | Seeded Manager |
+| **Unifi Cafe Indiranagar** | `UC-BLR-01` | Bengaluru | 100ft Road, HAL 2nd Stage | Rajesh Nair | Ananya Sharma |
+| **Unifi Cafe Koramangala** | `UC-BLR-02` | Bengaluru | 80ft Road, 4th Block | Rajesh Nair | Seeded Manager |
+| **Unifi Cafe Whitefield** | `UC-BLR-03` | Bengaluru | ITPL Main Rd, EPIP Zone | Rajesh Nair | Seeded Manager |
+| **Unifi Cafe Bandra** | `UC-MUM-01` | Mumbai | Linking Road, Bandra West | Unassigned | Seeded Manager |
+| **Unifi Cafe CyberCity** | `UC-DEL-01` | Gurugram | DLF Phase 2, CyberCity | Unassigned | Seeded Manager |
 
 ---
 
 ## 💳 Seeded Customer Profiles & Cards
 
-The primary demo customer (`customer@unicafe.demo`) has:
+The primary demo customer (`customer@unificafe.demo`) has:
 - **Customer Code:** `UC1001`
 - **Initial Recharge:** ₹5,000 paid.
 - **Starting Points:** 5,000 points.

@@ -37,7 +37,7 @@ export default function CustomerBooksPage() {
             <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
               <BookOpen className="h-6 w-6 text-amber-500" /> My Books
             </h1>
-            <p className="text-xs text-stone-400 mt-1">Buy books at any UniCafe counter with your points, and return them for a partial refund.</p>
+            <p className="text-xs text-stone-400 mt-1">Buy books at any Unifi Cafe counter with your points, and return them for a partial refund.</p>
           </div>
 
           {policy.length > 0 && (

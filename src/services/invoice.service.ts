@@ -28,7 +28,7 @@ export type Invoice = {
   notes: string[];
 };
 
-const COMPANY = { name: "UniCafe Hospitality", address: "India", email: "support@unicafe.app" };
+const COMPANY = { name: "Unifi Cafe Hospitality", address: "India", email: "support@unificafe.app" };
 
 async function billTo(customerId: Types.ObjectId | string) {
   const [u, p] = await Promise.all([
@@ -44,7 +44,7 @@ async function sellerFor(cafeId: Types.ObjectId | string | null | undefined) {
   if (!c) return COMPANY;
   const a = c.address;
   return {
-    name: `UniCafe — ${c.name}`,
+    name: c.name.startsWith("Unifi Cafe") ? c.name : `Unifi Cafe — ${c.name}`,
     address: [a?.line1, a?.area, a?.city, a?.state, a?.pincode].filter(Boolean).join(", "),
     phone: c.phone ?? undefined,
     email: c.email ?? undefined,
@@ -71,7 +71,7 @@ export async function getInvoice(user: AuthUser, kind: InvoiceKind, id: string):
     const items = await OrderItem.find({ order: order._id }).lean();
     const lines = items.map((it) => ({ description: it.name, quantity: it.quantity, rate: it.unitPoints, amount: it.lineTotal }));
     const notes = [
-      order.channel === "COUNTER" ? "Billed at the counter to the customer's membership card." : "Ordered through the UniCafe app.",
+      order.channel === "COUNTER" ? "Billed at the counter to the customer's membership card." : "Ordered through the Unifi Cafe app.",
       "1 point = ₹1. Paid from the membership points wallet.",
     ];
     if (order.status === "CANCELLED" || order.status === "REFUNDED") {

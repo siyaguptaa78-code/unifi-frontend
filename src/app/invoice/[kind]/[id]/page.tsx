@@ -38,7 +38,7 @@ export default function InvoicePage() {
         const j = await r.json();
         if (!r.ok) throw new Error(j.error?.message || "Invoice not found");
         setInv(j.data);
-        document.title = `${j.data.number} — UniCafe Invoice`;
+        document.title = `${j.data.number} — Unifi Cafe Invoice`;
       })
       .catch((e) => setError(e.message));
   }, [params.kind, params.id]);
@@ -82,7 +82,7 @@ export default function InvoicePage() {
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500 text-stone-950">
                 <Coffee className="h-4 w-4" />
               </span>
-              UniCafe
+              Unifi Cafe
             </div>
             <div className="mt-3 text-sm font-semibold">{inv.seller.name}</div>
             {inv.seller.address && <div className="text-xs text-stone-600 max-w-xs">{inv.seller.address}</div>}

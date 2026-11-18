@@ -1,12 +1,12 @@
-# UniCafe — Testing Strategy & Verification Guide
+# Unifi Cafe — Testing Strategy & Verification Guide
 
-This document outlines the testing architecture, automated test suites, execution procedures, and requirement mappings for the UniCafe platform.
+This document outlines the testing architecture, automated test suites, execution procedures, and requirement mappings for the Unifi Cafe platform.
 
 ---
 
 ## 🎯 Verification Objectives
 
-The UniCafe platform enforces strict enterprise business rules around financial ledger consistency, contactless access control, wallet transactions, and multi-tenant scoping. The test suite guarantees:
+The Unifi Cafe platform enforces strict enterprise business rules around financial ledger consistency, contactless access control, wallet transactions, and multi-tenant scoping. The test suite guarantees:
 
 1. **Zero Financial Discrepancies:** Wallet points can never be updated without an atomic, immutable ledger entry.
 2. **Recharge Idempotency:** Duplicate payment webhooks or double-clicks never grant double points or double hours.
@@ -18,7 +18,7 @@ The UniCafe platform enforces strict enterprise business rules around financial 
 
 ## 🧪 Automated Test Suite (`tests/run-tests.ts`)
 
-UniCafe includes a standalone end-to-end integration test runner powered by `tsx` and an isolated, in-memory MongoDB Replica Set (`mongodb-memory-server`).
+Unifi Cafe includes a standalone end-to-end integration test runner powered by `tsx` and an isolated, in-memory MongoDB Replica Set (`mongodb-memory-server`).
 
 ### Execution Command
 
@@ -54,7 +54,7 @@ The suite executes 24 automated assertions covering all 8 business verification 
 
 ```text
 =======================================================
-  UNICAFE MANDATORY BUSINESS LOGIC VERIFICATION SUITE
+  UNIFI CAFE MANDATORY BUSINESS LOGIC VERIFICATION SUITE
 =======================================================
 
 1. Starting isolated MongoDB Memory Replica Set...

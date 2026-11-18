@@ -50,7 +50,7 @@ export default function FranchisePublicPage() {
               Franchise Opportunities
             </Badge>
             <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-              Partner with UniCafe
+              Partner with Unifi Cafe
             </h1>
             <p className="mt-4 text-stone-300 text-sm sm:text-base leading-relaxed">
               Join India&apos;s fastest growing hospitality & workspace ecosystem. Scalable recurring membership revenue, high operational efficiency, and turnkey setup.
@@ -98,7 +98,7 @@ export default function FranchisePublicPage() {
           {/* Inquiry Application Form */}
           <div id="inquiry" className="max-w-2xl mx-auto rounded-3xl border border-stone-800 bg-stone-900/60 p-8 shadow-2xl">
             <div className="text-center mb-6">
-              <h3 className="text-xl font-bold text-white">Apply for a UniCafe Franchise</h3>
+              <h3 className="text-xl font-bold text-white">Apply for a Unifi Cafe Franchise</h3>
               <p className="text-xs text-stone-400 mt-1">
                 Fill in your details and our expansion supervisor will get in touch with complete financial prospectus.
               </p>
@@ -119,10 +119,10 @@ export default function FranchisePublicPage() {
                     Investment Budget
                   </label>
                   <select className="flex h-10 w-full rounded-lg border border-stone-800 bg-stone-900 px-3 py-2 text-sm text-stone-100">
-                    <option value="2500000">₹25,00,000 (UniCafe Express)</option>
-                    <option value="5000000">₹50,00,000 (UniCafe Lounge)</option>
-                    <option value="7500000">₹75,00,000 (UniCafe Premier Hub)</option>
-                    <option value="10000000">₹1,00,00,000 (UniCafe Flagship Experience)</option>
+                    <option value="2500000">₹25,00,000 (Unifi Cafe Express)</option>
+                    <option value="5000000">₹50,00,000 (Unifi Cafe Lounge)</option>
+                    <option value="7500000">₹75,00,000 (Unifi Cafe Premier Hub)</option>
+                    <option value="10000000">₹1,00,00,000 (Unifi Cafe Flagship Experience)</option>
                   </select>
                 </div>
                 <Button type="submit" className="w-full mt-4 font-semibold">

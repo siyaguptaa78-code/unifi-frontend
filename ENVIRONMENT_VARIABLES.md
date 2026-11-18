@@ -1,6 +1,6 @@
-# UniCafe — Environment Variables Reference
+# Unifi Cafe — Environment Variables Reference
 
-This document provides a comprehensive guide to all environment variables used by the UniCafe platform across development, testing, staging, and production environments.
+This document provides a comprehensive guide to all environment variables used by the Unifi Cafe platform across development, testing, staging, and production environments.
 
 ---
 
@@ -15,7 +15,7 @@ This document provides a comprehensive guide to all environment variables used b
 | `RAZORPAY_KEY_SECRET` | Optional | `your_secret_...` | Razorpay API Secret for validating HMAC-SHA256 checkout signatures. |
 | `NEXT_PUBLIC_RAZORPAY_KEY_ID` | Optional | `rzp_test_...` | Public Razorpay Key ID exposed to the browser to open the Razorpay Checkout modal. |
 | `BCRYPT_ROUNDS` | No | `10` | Salt work factor for hashing user passwords. Recommended: 10-12. |
-| `SESSION_COOKIE_NAME` | No | `unicafe_session` | Name of the secure HTTP-only cookie storing the session token. |
+| `SESSION_COOKIE_NAME` | No | `uc_session` | Name of the secure HTTP-only cookie storing the session token. |
 | `SESSION_MAX_AGE_SECONDS` | No | `604800` | Session cookie lifespan in seconds (default: 7 days). |
 | `NODE_ENV` | No | `development` | Node runtime environment (`development`, `production`, `test`). |
 
@@ -31,7 +31,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 ### 2. Cookie Security Configuration
-In production (`NODE_ENV=production`), UniCafe automatically sets:
+In production (`NODE_ENV=production`), Unifi Cafe automatically sets:
 - `Secure: true` (only transmitted over HTTPS).
 - `HttpOnly: true` (inaccessible to browser JavaScript, mitigating XSS attacks).
 - `SameSite: "lax"` (protects against CSRF).
@@ -45,7 +45,7 @@ When deploying to MongoDB Atlas:
 
 Example:
 ```ini
-MONGODB_URI="mongodb+srv://unicafe-prod:ComplexPassword@cluster0.abcde.mongodb.net/unicafe?retryWrites=true&w=majority"
+MONGODB_URI="mongodb+srv://unifi-cafe-prod:ComplexPassword@cluster0.abcde.mongodb.net/unicafe?retryWrites=true&w=majority"
 ```
 
 ---
@@ -62,7 +62,7 @@ MONGODB_URI="mongodb://127.0.0.1:27017/unicafe?replicaSet=rs0"
 # Authentication
 JWT_SECRET="e9a4f61b0c954e7d823485c2901aef32948b8c71d234a5e6f8901234bc56789a"
 BCRYPT_ROUNDS=10
-SESSION_COOKIE_NAME="unicafe_session"
+SESSION_COOKIE_NAME="uc_session"
 SESSION_MAX_AGE_SECONDS=604800
 
 # Payments (Razorpay)

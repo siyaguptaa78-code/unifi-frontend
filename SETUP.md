@@ -1,6 +1,6 @@
-# UniCafe — Setup & Installation Guide
+# Unifi Cafe — Setup & Installation Guide
 
-This guide provides comprehensive, step-by-step instructions to configure, run, test, and deploy the UniCafe multi-location cafe management platform.
+This guide provides comprehensive, step-by-step instructions to configure, run, test, and deploy the Unifi Cafe multi-location cafe management platform.
 
 ---
 
@@ -20,8 +20,8 @@ This guide provides comprehensive, step-by-step instructions to configure, run, 
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/unicafe.git
-cd unicafe
+git clone https://github.com/your-org/unifi-cafe.git
+cd unifi-cafe
 
 # Install npm dependencies
 npm install
@@ -53,7 +53,7 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 MONGODB_URI="mongodb://127.0.0.1:27017/unicafe?replicaSet=rs0"
 
 # JWT Authentication Secret (must be at least 32 characters)
-JWT_SECRET="super-secret-production-quality-unicafe-jwt-signing-key-32chars"
+JWT_SECRET="super-secret-production-quality-unifi-cafe-jwt-signing-key-32chars"
 
 # Razorpay Payment Gateway (Test or Live credentials)
 RAZORPAY_KEY_ID="rzp_test_YourTestKey12345"
@@ -62,18 +62,18 @@ NEXT_PUBLIC_RAZORPAY_KEY_ID="rzp_test_YourTestKey12345"
 
 # Security & Sessions
 BCRYPT_ROUNDS=10
-SESSION_COOKIE_NAME="unicafe_session"
+SESSION_COOKIE_NAME="uc_session"
 SESSION_MAX_AGE_SECONDS=604800
 ```
 
 > [!NOTE]
-> Even if Razorpay keys are omitted or set to placeholder values, UniCafe's built-in **Demo Payment Simulator** allows testing end-to-end recharge workflows without external network dependencies.
+> Even if Razorpay keys are omitted or set to placeholder values, Unifi Cafe's built-in **Demo Payment Simulator** allows testing end-to-end recharge workflows without external network dependencies.
 
 ---
 
 ## 🗄️ Step 3: MongoDB Database Setup
 
-UniCafe relies on MongoDB transactions (`session.withTransaction`) to guarantee that financial ledger records, points balances, and visit sessions are updated atomically. This requires MongoDB to run as a **Replica Set** (`rs0`).
+Unifi Cafe relies on MongoDB transactions (`session.withTransaction`) to guarantee that financial ledger records, points balances, and visit sessions are updated atomically. This requires MongoDB to run as a **Replica Set** (`rs0`).
 
 You have two options:
 
@@ -93,8 +93,8 @@ This starts a local MongoDB replica set listening on `127.0.0.1:27017`, naming t
 If you already have Docker installed:
 
 ```bash
-docker run -d --name unicafe-mongo -p 27017:27017 mongo:7.0 --replSet rs0
-docker exec -it unicafe-mongo mongosh --eval "rs.initiate()"
+docker run -d --name unifi-cafe-mongo -p 27017:27017 mongo:7.0 --replSet rs0
+docker exec -it unifi-cafe-mongo mongosh --eval "rs.initiate()"
 ```
 
 Or for MongoDB installed natively via Homebrew or Windows MSI:
@@ -190,7 +190,7 @@ npm run start
 This is caused by background anti-virus or file search indexers briefly locking the `.next` folder during webpack asset generation. Simply rerun `npm run build`.
 
 ### 2. `Transaction numbers are only allowed on a replica set member`
-UniCafe uses MongoDB transactions for financial consistency. Ensure your MongoDB connection string includes `?replicaSet=rs0` and that the replica set has been initiated (`rs.initiate()` in mongosh). Alternatively, use `npm run db:local`.
+Unifi Cafe uses MongoDB transactions for financial consistency. Ensure your MongoDB connection string includes `?replicaSet=rs0` and that the replica set has been initiated (`rs.initiate()` in mongosh). Alternatively, use `npm run db:local`.
 
 ### 3. Missing MSVC Runtime DLLs on Windows (`STATUS_DLL_NOT_FOUND`)
 If the embedded `mongod.exe` fails to start on clean Windows machines, ensure Microsoft Visual C++ Redistributable 2015-2022 is installed, or copy `msvcp140.dll` and `vcruntime140_1.dll` to the `node_modules/.cache/mongodb-memory-server/` directory.

@@ -49,14 +49,14 @@ export default function HomePage() {
             </h1>
 
             <p className="mt-6 text-base sm:text-lg text-stone-300 max-w-2xl mx-auto leading-relaxed">
-              UniCafe reimagines the third space for modern professionals and creators.
+              Unifi Cafe reimagines the third space for modern professionals and creators.
               Recharge ₹5,000 to unlock 5,000 points for dining, 150 hours of high-speed cafe access, contactless NFC entry, and online pre-ordering before arrival.
             </p>
 
             <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3.5">
               <Link href="/register">
                 <Button size="lg" className="w-full sm:w-auto font-bold px-8 gap-2 shadow-xl shadow-amber-600/25 bg-amber-500 hover:bg-amber-400 text-stone-950">
-                  <span>Join UniCafe for ₹5,000</span>
+                  <span>Join Unifi Cafe for ₹5,000</span>
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
@@ -120,7 +120,7 @@ export default function HomePage() {
             <div className="text-center max-w-3xl mx-auto mb-16">
               <Badge variant="default" className="mb-3">The Membership Model</Badge>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-                How UniCafe Works For You
+                How Unifi Cafe Works For You
               </h2>
               <p className="mt-3 text-sm text-stone-400 leading-relaxed">
                 A simple, transparent subscription model that gives you 100% of your money back in food, drinks, and coworking freedom.
@@ -154,7 +154,7 @@ export default function HomePage() {
                   </div>
                   <h3 className="text-xl font-bold text-white">NFC Tap & Check-In</h3>
                   <p className="mt-2.5 text-xs text-stone-300 leading-relaxed">
-                    Walk into any UniCafe branch in Indiranagar, Koramangala, Bandra, Connaught Place or Cyber Hub.
+                    Walk into any Unifi Cafe branch in Indiranagar, Koramangala, Bandra, Connaught Place or Cyber Hub.
                     Simply tap your smart NFC card at the entry turnstile or staff scanner. The system computes exact duration and deducts visit minutes seamlessly.
                   </p>
                 </div>
@@ -205,7 +205,7 @@ export default function HomePage() {
                   <div className="flex items-start gap-2.5">
                     <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
                     <div>
-                      <strong className="text-white">Select Any UniCafe Branch:</strong> View real-time open status, branch address, and live kitchen queues.
+                      <strong className="text-white">Select Any Unifi Cafe Branch:</strong> View real-time open status, branch address, and live kitchen queues.
                     </div>
                   </div>
                   <div className="flex items-start gap-2.5">
@@ -217,7 +217,7 @@ export default function HomePage() {
                   <div className="flex items-start gap-2.5">
                     <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
                     <div>
-                      <strong className="text-white">Cafe Self-Pickup / Dine-In Only:</strong> UniCafe operates exclusively on in-store pickup and dine-in. No delivery fees, no cold food, no third-party delivery couriers.
+                      <strong className="text-white">Cafe Self-Pickup / Dine-In Only:</strong> Unifi Cafe operates exclusively on in-store pickup and dine-in. No delivery fees, no cold food, no third-party delivery couriers.
                     </div>
                   </div>
                 </div>
@@ -245,7 +245,7 @@ export default function HomePage() {
                       <Coffee className="h-4 w-4" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-white">UniCafe Indiranagar 100ft</div>
+                      <div className="text-xs font-bold text-white">Unifi Cafe Indiranagar 100ft</div>
                       <div className="text-[10px] text-emerald-400">Open • Kitchen Ready</div>
                     </div>
                   </div>
@@ -356,7 +356,7 @@ export default function HomePage() {
                     Franchise Partner Program
                   </Badge>
                   <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-                    Partner with UniCafe as a Franchise Owner
+                    Partner with Unifi Cafe as a Franchise Owner
                   </h2>
                   <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
                     Own a high-margin, tech-enabled cafe and coworking hub in your city.
@@ -365,15 +365,15 @@ export default function HomePage() {
                   <ul className="space-y-2 text-xs text-stone-300 pt-1">
                     <li className="flex items-center gap-2">
                       <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                      <span>UniCafe Express (400-600 sq ft) from ₹25 Lakhs</span>
+                      <span>Unifi Cafe Express (400-600 sq ft) from ₹25 Lakhs</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                      <span>UniCafe Lounge (800-1200 sq ft) from ₹50 Lakhs</span>
+                      <span>Unifi Cafe Lounge (800-1200 sq ft) from ₹50 Lakhs</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                      <span>UniCafe Premier Hub (1500-2200 sq ft) from ₹75 Lakhs</span>
+                      <span>Unifi Cafe Premier Hub (1500-2200 sq ft) from ₹75 Lakhs</span>
                     </li>
                   </ul>
                   <div className="pt-2">
@@ -422,7 +422,7 @@ export default function HomePage() {
               Ready to Upgrade Your Work & Coffee Life?
             </h2>
             <p className="mt-4 text-sm text-stone-300 max-w-xl mx-auto leading-relaxed">
-              Activate your UniCafe membership in 2 minutes. Get 5,000 points and 150 hours of uninterrupted productivity.
+              Activate your Unifi Cafe membership in 2 minutes. Get 5,000 points and 150 hours of uninterrupted productivity.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3.5">
               <Link href="/register">

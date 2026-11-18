@@ -262,7 +262,7 @@ export default function AdminMenuPage() {
     <PortalLayout allowedRoles={["SUPER_ADMIN"]}>
       <PageHeader
         title="Central Menu Governance & Food Catalog"
-        description="Global menu management across all UniCafe locations. Govern base points pricing, nutritional flags, categories, and branch-level customization approvals."
+        description="Global menu management across all Unifi Cafe locations. Govern base points pricing, nutritional flags, categories, and branch-level customization approvals."
         badge="Catalog Governance"
         action={
           <div className="flex items-center gap-2">

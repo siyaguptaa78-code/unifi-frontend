@@ -58,7 +58,7 @@ export default function CustomerCardPage() {
               <span>Digital Membership Card</span>
             </h1>
             <p className="text-xs text-stone-400 mt-1">
-              Present this card at the entrance desk of any UniCafe location or tap your physical NFC card.
+              Present this card at the entrance desk of any Unifi Cafe location or tap your physical NFC card.
             </p>
           </div>
 
@@ -73,7 +73,7 @@ export default function CustomerCardPage() {
                     <CreditCard className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-white text-base">UniCafe Access</h3>
+                    <h3 className="font-bold text-white text-base">Unifi Cafe Access</h3>
                     <span className="text-[10px] text-amber-400 uppercase tracking-widest font-semibold block">
                       Universal Pass
                     </span>

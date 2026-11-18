@@ -76,8 +76,8 @@ export function CustomerNavbar() {
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 text-stone-950 font-bold shadow-sm">
               <Coffee className="h-5 w-5 stroke-[2.2]" />
             </div>
-            <span className="text-base font-bold text-white tracking-tight">
-              Uni<span className="text-amber-500">Cafe</span>
+            <span className="text-base font-bold text-white tracking-tight whitespace-nowrap">
+              Unifi <span className="text-amber-500">Cafe</span>
             </span>
           </Link>
 

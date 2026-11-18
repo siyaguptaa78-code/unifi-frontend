@@ -211,7 +211,7 @@ export default function AdminCafesPage() {
     <PortalLayout allowedRoles={["SUPER_ADMIN"]}>
       <PageHeader
         title="Cafe Locations & Branch Governance"
-        description="Comprehensive configuration of UniCafe branches: operating hours, pre-order acceptance, kitchen prep estimates, supervisor/manager assignments and licensing."
+        description="Comprehensive configuration of Unifi Cafe branches: operating hours, pre-order acceptance, kitchen prep estimates, supervisor/manager assignments and licensing."
         badge="Branch Network"
         action={
           <Button size="sm" onClick={openCreate} className="text-xs h-9">
@@ -356,7 +356,7 @@ export default function AdminCafesPage() {
                 <Input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. UniCafe Indiranagar"
+                  placeholder="e.g. Unifi Cafe Indiranagar"
                   required
                   className="mt-1 text-xs"
                 />

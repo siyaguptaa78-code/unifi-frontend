@@ -84,7 +84,7 @@ export default function CustomerDashboardPage() {
                 {!flags?.inactive && <Badge variant="success">ACTIVE MEMBER</Badge>}
               </h1>
               <p className="text-xs text-stone-400 mt-1">
-                Your UniCafe card is valid at all 5 registered locations. Tap to enter, spend points on food.
+                Your Unifi Cafe card is valid at all 5 registered locations. Tap to enter, spend points on food.
               </p>
             </div>
 
@@ -188,7 +188,7 @@ export default function CustomerDashboardPage() {
               <div className="flex justify-between items-start">
                 <div>
                   <span className="text-[10px] font-bold uppercase tracking-widest text-amber-500">Digital Access Card</span>
-                  <h3 className="text-base font-bold text-white mt-0.5">UniCafe Universal</h3>
+                  <h3 className="text-base font-bold text-white mt-0.5">Unifi Cafe Universal</h3>
                 </div>
                 <Badge variant="success">Active</Badge>
               </div>
@@ -274,7 +274,7 @@ export default function CustomerDashboardPage() {
               {recentVisits.length === 0 ? (
                 <EmptyState
                   title="No visits recorded"
-                  description="When you tap your NFC or RFID card at any UniCafe location, your check-in and elapsed time will appear here."
+                  description="When you tap your NFC or RFID card at any Unifi Cafe location, your check-in and elapsed time will appear here."
                 />
               ) : (
                 <div className="divide-y divide-stone-800/60">

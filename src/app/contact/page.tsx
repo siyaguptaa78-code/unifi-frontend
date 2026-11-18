@@ -46,7 +46,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h4 className="text-xs text-stone-400 uppercase tracking-wider">Email Support</h4>
-                    <p className="text-sm font-semibold text-white mt-0.5">support@unicafe.demo</p>
+                    <p className="text-sm font-semibold text-white mt-0.5">support@unificafe.demo</p>
                   </div>
                 </div>
 

@@ -40,12 +40,12 @@ export default function LoginPage() {
   };
 
   const demoAccounts = [
-    { role: "Super Admin", id: "admin@unicafe.demo", pw: "Admin@123", color: "border-purple-500/40 text-purple-400" },
-    { role: "Area Supervisor", id: "supervisor@unicafe.demo", pw: "Demo@123", color: "border-blue-500/40 text-blue-400" },
-    { role: "Franchise Owner", id: "owner@unicafe.demo", pw: "Demo@123", color: "border-emerald-500/40 text-emerald-400" },
-    { role: "Cafe Manager", id: "manager@unicafe.demo", pw: "Demo@123", color: "border-amber-500/40 text-amber-400" },
-    { role: "Cafe Staff", id: "staff@unicafe.demo", pw: "Demo@123", color: "border-cyan-500/40 text-cyan-400" },
-    { role: "Customer", id: "customer@unicafe.demo", pw: "Demo@123", color: "border-stone-500/40 text-stone-300" },
+    { role: "Super Admin", id: "admin@unificafe.demo", pw: "Admin@123", color: "border-purple-500/40 text-purple-400" },
+    { role: "Area Supervisor", id: "supervisor@unificafe.demo", pw: "Demo@123", color: "border-blue-500/40 text-blue-400" },
+    { role: "Franchise Owner", id: "owner@unificafe.demo", pw: "Demo@123", color: "border-emerald-500/40 text-emerald-400" },
+    { role: "Cafe Manager", id: "manager@unificafe.demo", pw: "Demo@123", color: "border-amber-500/40 text-amber-400" },
+    { role: "Cafe Staff", id: "staff@unificafe.demo", pw: "Demo@123", color: "border-cyan-500/40 text-cyan-400" },
+    { role: "Customer", id: "customer@unificafe.demo", pw: "Demo@123", color: "border-stone-500/40 text-stone-300" },
   ];
 
   return (
@@ -60,7 +60,7 @@ export default function LoginPage() {
           </div>
         </Link>
         <h2 className="text-2xl font-bold tracking-tight text-white">
-          Sign in to Uni<span className="text-amber-500">Cafe</span>
+          Sign in to Unifi <span className="text-amber-500">Cafe</span>
         </h2>
         <p className="mt-1 text-xs text-stone-400">
           Enter your registered email or mobile to access your workspace portal.

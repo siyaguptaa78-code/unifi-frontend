@@ -362,7 +362,7 @@ function CustomerMenuContent() {
                 <ShieldCheck className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
                 <div className="leading-relaxed">
                   <span className="font-bold text-white block">In-Cafe Collection / Dine-In Only</span>
-                  UniCafe does not provide home delivery. All orders must be enjoyed or picked up at this selected branch.
+                  Unifi Cafe does not provide home delivery. All orders must be enjoyed or picked up at this selected branch.
                 </div>
               </div>
             </div>
@@ -585,7 +585,7 @@ function CustomerMenuContent() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-lg font-bold">
               <ShoppingBag className="h-5 w-5 text-amber-500" />
-              <span>Review Your UniCafe Order</span>
+              <span>Review Your Unifi Cafe Order</span>
             </DialogTitle>
             <DialogDescription className="text-stone-400 text-xs">
               Orders are prepared fresh at <strong>{activeCafe?.name}</strong>. In-store collection or dine-in only (no home delivery).

@@ -1,4 +1,4 @@
-# UniCafe Dual-Repository Git Push Helper Script
+# Unifi Cafe Dual-Repository Git Push Helper Script
 # This script pushes both Frontend and Backend to their respective GitHub repositories.
 
 param (
@@ -13,7 +13,7 @@ if (-not (Test-Path $GitExe)) {
 }
 
 Write-Host "=======================================================" -ForegroundColor Cyan
-Write-Host "       ☕ UNICAFE DUAL-REPOSITORY GITHUB PUSH" -ForegroundColor Cyan
+Write-Host "       ☕ UNIFI CAFE DUAL-REPOSITORY GITHUB PUSH" -ForegroundColor Cyan
 Write-Host "=======================================================" -ForegroundColor Cyan
 
 if ($GitHubToken -ne "") {

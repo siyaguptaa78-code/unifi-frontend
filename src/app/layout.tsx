@@ -3,7 +3,7 @@ import { Providers } from "@/components/providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "UniCafe — Multi-location Cafe Membership & Access Platform",
+  title: "Unifi Cafe — Multi-location Cafe Membership & Access Platform",
   description: "Seamless cafe memberships, NFC/RFID check-in, points wallet, food ordering and multi-unit franchise management.",
 };
 

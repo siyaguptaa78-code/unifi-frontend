@@ -308,7 +308,7 @@ export default function AdminFranchisesPage() {
                 <Input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. UniCafe Whitefield Partner"
+                  placeholder="e.g. Unifi Cafe Whitefield Partner"
                   required
                   className="mt-1 text-xs"
                 />

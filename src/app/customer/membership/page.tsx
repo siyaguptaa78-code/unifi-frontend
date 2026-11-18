@@ -245,7 +245,7 @@ export default function CustomerMembershipPage() {
           <DialogHeader>
             <DialogTitle className="text-base font-bold flex items-center gap-2">
               <ShieldCheck className="h-5 w-5 text-amber-500" />
-              <span>UniCafe Checkout</span>
+              <span>Unifi Cafe Checkout</span>
             </DialogTitle>
             <DialogDescription>
               Amount to pay: <strong>{formatINR(orderPayload?.amount)}</strong> for {formatPoints(orderPayload?.benefits?.points)}

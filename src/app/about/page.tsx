@@ -19,7 +19,7 @@ export default function AboutPage() {
               Reimagining the Workspace Cafe Experience
             </h1>
             <p className="mt-4 text-stone-300 text-sm sm:text-base leading-relaxed">
-              UniCafe was founded with a clear thesis: the best ideas happen over great coffee, and modern professionals deserve workspaces that nourish creativity rather than stifling it in sterile cubicles.
+              Unifi Cafe was founded with a clear thesis: the best ideas happen over great coffee, and modern professionals deserve workspaces that nourish creativity rather than stifling it in sterile cubicles.
             </p>
           </div>
 

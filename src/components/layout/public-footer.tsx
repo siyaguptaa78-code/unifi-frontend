@@ -12,8 +12,8 @@ export function PublicFooter() {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-600 text-stone-950 font-bold">
                 <Coffee className="h-4 w-4" />
               </div>
-              <span className="text-base font-bold text-white tracking-tight">
-                Uni<span className="text-amber-500">Cafe</span>
+              <span className="text-base font-bold text-white tracking-tight whitespace-nowrap">
+                Unifi <span className="text-amber-500">Cafe</span>
               </span>
             </div>
             <p className="text-xs text-stone-400 leading-relaxed">
@@ -58,7 +58,7 @@ export function PublicFooter() {
         </div>
 
         <div className="mt-8 border-t border-stone-800/60 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-stone-500">
-          <p>© {new Date().getFullYear()} UniCafe Technologies Pvt Ltd. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Unifi Cafe Technologies Pvt Ltd. All rights reserved.</p>
           <div className="flex gap-4">
             <Link href="/terms" className="hover:text-stone-300">Terms of Service</Link>
             <Link href="/privacy" className="hover:text-stone-300">Privacy Policy</Link>

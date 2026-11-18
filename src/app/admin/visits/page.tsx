@@ -458,7 +458,7 @@ export default function AdminVisitsPage() {
           <DialogHeader>
             <DialogTitle>Bind Hardware RFID / NFC Card</DialogTitle>
             <DialogDescription>
-              Assign a physical card UID to an active UniCafe member. Replaces any previous active physical card.
+              Assign a physical card UID to an active Unifi Cafe member. Replaces any previous active physical card.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleAssignCard} className="space-y-4 pt-2">

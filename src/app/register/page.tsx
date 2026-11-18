@@ -69,7 +69,7 @@ export default function RegisterPage() {
           </div>
         </Link>
         <h2 className="text-2xl font-bold tracking-tight text-white">
-          Join the Uni<span className="text-amber-500">Cafe</span> Network
+          Join the Unifi <span className="text-amber-500">Cafe</span> Network
         </h2>
         <p className="mt-1 text-xs text-stone-400">
           Sign up to purchase membership, receive 5,000 points & 150 cafe hours.

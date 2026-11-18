@@ -102,7 +102,7 @@ export async function awardReferralOnFirstRecharge(customerId: Id, paymentId: Id
       refModel: "User",
       refId: customerId,
       reference: `REF-${String(customerId).slice(-6).toUpperCase()}`,
-      description: `Referral reward — ${referee?.name ?? "your friend"} joined UniCafe`,
+      description: `Referral reward — ${referee?.name ?? "your friend"} joined Unifi Cafe`,
       session,
       isDemo,
       allowInactive: true,

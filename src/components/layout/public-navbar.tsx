@@ -29,8 +29,8 @@ export function PublicNavbar() {
             <Coffee className="h-5 w-5 stroke-[2.2]" />
           </div>
           <div>
-            <span className="text-lg font-bold tracking-tight text-white flex items-center gap-1">
-              Uni<span className="text-amber-500">Cafe</span>
+            <span className="text-lg font-bold tracking-tight text-white whitespace-nowrap">
+              Unifi <span className="text-amber-500">Cafe</span>
             </span>
             <span className="hidden sm:block text-[10px] font-medium text-stone-400 -mt-1 uppercase tracking-wider">
               Work & Coffee Club
@@ -72,7 +72,7 @@ export function PublicNavbar() {
               </Link>
               <Link href="/register">
                 <Button size="sm" className="shadow-sm">
-                  Join UniCafe
+                  Join Unifi Cafe
                 </Button>
               </Link>
             </>
